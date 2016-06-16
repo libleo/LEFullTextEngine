@@ -7,13 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30736CD1CF478EC00D793C0 /* dict in Resources */ = {isa = PBXBuildFile; fileRef = B30736CC1CF478EC00D793C0 /* dict */; };
+		B30736D11CF5BD9B00D793C0 /* LEFullTextEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = B30736D01CF5BD9B00D793C0 /* LEFullTextEngine.mm */; };
+		B30736D41CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = B30736D31CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm */; };
+		B30736D71CF5BDDA00D793C0 /* LEFTValue.m in Sources */ = {isa = PBXBuildFile; fileRef = B30736D61CF5BDDA00D793C0 /* LEFTValue.m */; };
+		B30736DE1CFFD3E100D793C0 /* jsoncpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30736DD1CFFD3E100D793C0 /* jsoncpp.cpp */; };
+		B39590951D0D66B200651C91 /* LEFTSQLDataImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */; };
+		B39590A31D0D803100651C91 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590981D0D803100651C91 /* FMDatabase.m */; };
+		B39590A41D0D803100651C91 /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B395909A1D0D803100651C91 /* FMDatabaseAdditions.m */; };
+		B39590A51D0D803100651C91 /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = B395909C1D0D803100651C91 /* FMDatabasePool.m */; };
+		B39590A61D0D803100651C91 /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B395909E1D0D803100651C91 /* FMDatabaseQueue.m */; };
+		B39590A71D0D803100651C91 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590A11D0D803100651C91 /* FMResultSet.m */; };
+		B39590A81D0D803100651C91 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39590A21D0D803100651C91 /* Info.plist */; };
+		B39590AA1D0D806C00651C91 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B39590A91D0D806C00651C91 /* libsqlite3.0.tbd */; };
 		B3A5166A1CEEE6E6003CFA3B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A516691CEEE6E6003CFA3B /* AppDelegate.m */; };
 		B3A5166D1CEEE6E6003CFA3B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A5166C1CEEE6E6003CFA3B /* main.m */; };
-		B3A516701CEEE6E6003CFA3B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A5166F1CEEE6E6003CFA3B /* ViewController.m */; };
+		B3A516701CEEE6E6003CFA3B /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A5166F1CEEE6E6003CFA3B /* ViewController.mm */; };
 		B3A516721CEEE6E6003CFA3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3A516711CEEE6E6003CFA3B /* Assets.xcassets */; };
 		B3A516751CEEE6E6003CFA3B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3A516731CEEE6E6003CFA3B /* Main.storyboard */; };
 		B3A516801CEEE6E6003CFA3B /* FullTextSearchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A5167F1CEEE6E6003CFA3B /* FullTextSearchTests.m */; };
 		B3A5168B1CEEE6E6003CFA3B /* FullTextSearchUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A5168A1CEEE6E6003CFA3B /* FullTextSearchUITests.m */; };
+		B3A5169A1CEEF028003CFA3B /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A516991CEEF028003CFA3B /* libbz2.tbd */; };
+		B3A5169C1CEEF055003CFA3B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A5169B1CEEF055003CFA3B /* libz.tbd */; };
+		B3B640A61D116E8F006E65F3 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B640A51D116E8F006E65F3 /* libiconv.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,12 +50,38 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B30736CC1CF478EC00D793C0 /* dict */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dict; path = cppjieba/dict; sourceTree = "<group>"; };
+		B30736CF1CF5BD9B00D793C0 /* LEFullTextEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFullTextEngine.h; sourceTree = "<group>"; };
+		B30736D01CF5BD9B00D793C0 /* LEFullTextEngine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFullTextEngine.mm; sourceTree = "<group>"; };
+		B30736D21CF5BDB400D793C0 /* LEFTPartcipleWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTPartcipleWrapper.h; sourceTree = "<group>"; };
+		B30736D31CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFTPartcipleWrapper.mm; sourceTree = "<group>"; };
+		B30736D51CF5BDDA00D793C0 /* LEFTValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTValue.h; sourceTree = "<group>"; };
+		B30736D61CF5BDDA00D793C0 /* LEFTValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTValue.m; sourceTree = "<group>"; };
+		B30736D81CF5BE1300D793C0 /* LEFTDataImporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEFTDataImporter.h; sourceTree = "<group>"; };
+		B30736DB1CFFD3E100D793C0 /* json-forwards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "json-forwards.h"; sourceTree = "<group>"; };
+		B30736DC1CFFD3E100D793C0 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
+		B30736DD1CFFD3E100D793C0 /* jsoncpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsoncpp.cpp; sourceTree = "<group>"; };
+		B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTSQLDataImporter.h; sourceTree = "<group>"; };
+		B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTSQLDataImporter.m; sourceTree = "<group>"; };
+		B39590971D0D803100651C91 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
+		B39590981D0D803100651C91 /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
+		B39590991D0D803100651C91 /* FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseAdditions.h; sourceTree = "<group>"; };
+		B395909A1D0D803100651C91 /* FMDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabaseAdditions.m; sourceTree = "<group>"; };
+		B395909B1D0D803100651C91 /* FMDatabasePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabasePool.h; sourceTree = "<group>"; };
+		B395909C1D0D803100651C91 /* FMDatabasePool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabasePool.m; sourceTree = "<group>"; };
+		B395909D1D0D803100651C91 /* FMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseQueue.h; sourceTree = "<group>"; };
+		B395909E1D0D803100651C91 /* FMDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabaseQueue.m; sourceTree = "<group>"; };
+		B395909F1D0D803100651C91 /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
+		B39590A01D0D803100651C91 /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMResultSet.h; sourceTree = "<group>"; };
+		B39590A11D0D803100651C91 /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMResultSet.m; sourceTree = "<group>"; };
+		B39590A21D0D803100651C91 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B39590A91D0D806C00651C91 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		B3A516651CEEE6E6003CFA3B /* FullTextSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FullTextSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A516681CEEE6E6003CFA3B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B3A516691CEEE6E6003CFA3B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		B3A5166C1CEEE6E6003CFA3B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B3A5166E1CEEE6E6003CFA3B /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		B3A5166F1CEEE6E6003CFA3B /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		B3A5166F1CEEE6E6003CFA3B /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		B3A516711CEEE6E6003CFA3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B3A516741CEEE6E6003CFA3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B3A516761CEEE6E6003CFA3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -49,6 +91,24 @@
 		B3A516861CEEE6E6003CFA3B /* FullTextSearchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FullTextSearchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A5168A1CEEE6E6003CFA3B /* FullTextSearchUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FullTextSearchUITests.m; sourceTree = "<group>"; };
 		B3A5168C1CEEE6E6003CFA3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3A516991CEEF028003CFA3B /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		B3A5169B1CEEF055003CFA3B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B3A516A21CEEF993003CFA3B /* DictTrie.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DictTrie.hpp; sourceTree = "<group>"; };
+		B3A516A31CEEF993003CFA3B /* FullSegment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FullSegment.hpp; sourceTree = "<group>"; };
+		B3A516A41CEEF993003CFA3B /* HMMModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HMMModel.hpp; sourceTree = "<group>"; };
+		B3A516A51CEEF993003CFA3B /* HMMSegment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HMMSegment.hpp; sourceTree = "<group>"; };
+		B3A516A61CEEF993003CFA3B /* Jieba.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Jieba.hpp; sourceTree = "<group>"; };
+		B3A516A71CEEF993003CFA3B /* KeywordExtractor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = KeywordExtractor.hpp; sourceTree = "<group>"; };
+		B3A516A81CEEF993003CFA3B /* MixSegment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MixSegment.hpp; sourceTree = "<group>"; };
+		B3A516A91CEEF993003CFA3B /* MPSegment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MPSegment.hpp; sourceTree = "<group>"; };
+		B3A516AA1CEEF993003CFA3B /* PosTagger.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PosTagger.hpp; sourceTree = "<group>"; };
+		B3A516AB1CEEF993003CFA3B /* PreFilter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PreFilter.hpp; sourceTree = "<group>"; };
+		B3A516AC1CEEF993003CFA3B /* QuerySegment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QuerySegment.hpp; sourceTree = "<group>"; };
+		B3A516AD1CEEF993003CFA3B /* SegmentBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SegmentBase.hpp; sourceTree = "<group>"; };
+		B3A516AE1CEEF993003CFA3B /* TextRankExtractor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextRankExtractor.hpp; sourceTree = "<group>"; };
+		B3A516AF1CEEF993003CFA3B /* Trie.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trie.hpp; sourceTree = "<group>"; };
+		B3A516B01CEEF993003CFA3B /* Unicode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Unicode.hpp; sourceTree = "<group>"; };
+		B3B640A51D116E8F006E65F3 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +116,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3B640A61D116E8F006E65F3 /* libiconv.tbd in Frameworks */,
+				B39590AA1D0D806C00651C91 /* libsqlite3.0.tbd in Frameworks */,
+				B3A5169C1CEEF055003CFA3B /* libz.tbd in Frameworks */,
+				B3A5169A1CEEF028003CFA3B /* libbz2.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,9 +140,66 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B30736CE1CF5BD1E00D793C0 /* LEFullTextEngine */ = {
+			isa = PBXGroup;
+			children = (
+				B30736CF1CF5BD9B00D793C0 /* LEFullTextEngine.h */,
+				B30736D01CF5BD9B00D793C0 /* LEFullTextEngine.mm */,
+				B30736D21CF5BDB400D793C0 /* LEFTPartcipleWrapper.h */,
+				B30736D31CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm */,
+				B30736D51CF5BDDA00D793C0 /* LEFTValue.h */,
+				B30736D61CF5BDDA00D793C0 /* LEFTValue.m */,
+				B30736D81CF5BE1300D793C0 /* LEFTDataImporter.h */,
+				B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */,
+				B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */,
+			);
+			name = LEFullTextEngine;
+			path = FullTextSearch/LEFullTextEngine;
+			sourceTree = "<group>";
+		};
+		B30736D91CFFD3E100D793C0 /* jsoncpp */ = {
+			isa = PBXGroup;
+			children = (
+				B30736DA1CFFD3E100D793C0 /* json */,
+				B30736DD1CFFD3E100D793C0 /* jsoncpp.cpp */,
+			);
+			path = jsoncpp;
+			sourceTree = "<group>";
+		};
+		B30736DA1CFFD3E100D793C0 /* json */ = {
+			isa = PBXGroup;
+			children = (
+				B30736DB1CFFD3E100D793C0 /* json-forwards.h */,
+				B30736DC1CFFD3E100D793C0 /* json.h */,
+			);
+			path = json;
+			sourceTree = "<group>";
+		};
+		B39590961D0D803100651C91 /* fmdb */ = {
+			isa = PBXGroup;
+			children = (
+				B39590971D0D803100651C91 /* FMDatabase.h */,
+				B39590981D0D803100651C91 /* FMDatabase.m */,
+				B39590991D0D803100651C91 /* FMDatabaseAdditions.h */,
+				B395909A1D0D803100651C91 /* FMDatabaseAdditions.m */,
+				B395909B1D0D803100651C91 /* FMDatabasePool.h */,
+				B395909C1D0D803100651C91 /* FMDatabasePool.m */,
+				B395909D1D0D803100651C91 /* FMDatabaseQueue.h */,
+				B395909E1D0D803100651C91 /* FMDatabaseQueue.m */,
+				B395909F1D0D803100651C91 /* FMDB.h */,
+				B39590A01D0D803100651C91 /* FMResultSet.h */,
+				B39590A11D0D803100651C91 /* FMResultSet.m */,
+				B39590A21D0D803100651C91 /* Info.plist */,
+			);
+			path = fmdb;
+			sourceTree = "<group>";
+		};
 		B3A5165C1CEEE6E6003CFA3B = {
 			isa = PBXGroup;
 			children = (
+				B30736CE1CF5BD1E00D793C0 /* LEFullTextEngine */,
+				B3A516A01CEEF97E003CFA3B /* Vendors */,
+				B3A5169D1CEEF938003CFA3B /* Frameworks */,
 				B3A516671CEEE6E6003CFA3B /* FullTextSearch */,
 				B3A5167E1CEEE6E6003CFA3B /* FullTextSearchTests */,
 				B3A516891CEEE6E6003CFA3B /* FullTextSearchUITests */,
@@ -102,7 +223,7 @@
 				B3A516681CEEE6E6003CFA3B /* AppDelegate.h */,
 				B3A516691CEEE6E6003CFA3B /* AppDelegate.m */,
 				B3A5166E1CEEE6E6003CFA3B /* ViewController.h */,
-				B3A5166F1CEEE6E6003CFA3B /* ViewController.m */,
+				B3A5166F1CEEE6E6003CFA3B /* ViewController.mm */,
 				B3A516711CEEE6E6003CFA3B /* Assets.xcassets */,
 				B3A516731CEEE6E6003CFA3B /* Main.storyboard */,
 				B3A516761CEEE6E6003CFA3B /* Info.plist */,
@@ -137,6 +258,51 @@
 			path = FullTextSearchUITests;
 			sourceTree = "<group>";
 		};
+		B3A5169D1CEEF938003CFA3B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B3B640A51D116E8F006E65F3 /* libiconv.tbd */,
+				B39590A91D0D806C00651C91 /* libsqlite3.0.tbd */,
+				B3A5169B1CEEF055003CFA3B /* libz.tbd */,
+				B3A516991CEEF028003CFA3B /* libbz2.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3A516A01CEEF97E003CFA3B /* Vendors */ = {
+			isa = PBXGroup;
+			children = (
+				B39590961D0D803100651C91 /* fmdb */,
+				B30736D91CFFD3E100D793C0 /* jsoncpp */,
+				B30736CC1CF478EC00D793C0 /* dict */,
+				B3A516A11CEEF993003CFA3B /* cppjieba */,
+			);
+			name = Vendors;
+			sourceTree = "<group>";
+		};
+		B3A516A11CEEF993003CFA3B /* cppjieba */ = {
+			isa = PBXGroup;
+			children = (
+				B3A516A21CEEF993003CFA3B /* DictTrie.hpp */,
+				B3A516A31CEEF993003CFA3B /* FullSegment.hpp */,
+				B3A516A41CEEF993003CFA3B /* HMMModel.hpp */,
+				B3A516A51CEEF993003CFA3B /* HMMSegment.hpp */,
+				B3A516A61CEEF993003CFA3B /* Jieba.hpp */,
+				B3A516A71CEEF993003CFA3B /* KeywordExtractor.hpp */,
+				B3A516A81CEEF993003CFA3B /* MixSegment.hpp */,
+				B3A516A91CEEF993003CFA3B /* MPSegment.hpp */,
+				B3A516AA1CEEF993003CFA3B /* PosTagger.hpp */,
+				B3A516AB1CEEF993003CFA3B /* PreFilter.hpp */,
+				B3A516AC1CEEF993003CFA3B /* QuerySegment.hpp */,
+				B3A516AD1CEEF993003CFA3B /* SegmentBase.hpp */,
+				B3A516AE1CEEF993003CFA3B /* TextRankExtractor.hpp */,
+				B3A516AF1CEEF993003CFA3B /* Trie.hpp */,
+				B3A516B01CEEF993003CFA3B /* Unicode.hpp */,
+			);
+			name = cppjieba;
+			path = cppjieba/include/cppjieba;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -144,6 +310,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3A5168F1CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearch" */;
 			buildPhases = (
+				B3A516981CEEE721003CFA3B /* ShellScript */,
 				B3A516611CEEE6E6003CFA3B /* Sources */,
 				B3A516621CEEE6E6003CFA3B /* Frameworks */,
 				B3A516631CEEE6E6003CFA3B /* Resources */,
@@ -240,8 +407,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39590A81D0D803100651C91 /* Info.plist in Resources */,
 				B3A516721CEEE6E6003CFA3B /* Assets.xcassets in Resources */,
 				B3A516751CEEE6E6003CFA3B /* Main.storyboard in Resources */,
+				B30736CD1CF478EC00D793C0 /* dict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,14 +430,40 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		B3A516981CEEE721003CFA3B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"start rocksdb build\"\n\ncd $SRCROOT/rocksdb\nmake static_lib\n\nif (($? == 0))\nthen\n    echo \"rocksdb build succeed!\"\nelse\n    echo \"rocksdb build failed!\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B3A516611CEEE6E6003CFA3B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3A516701CEEE6E6003CFA3B /* ViewController.m in Sources */,
+				B30736D71CF5BDDA00D793C0 /* LEFTValue.m in Sources */,
+				B30736D41CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm in Sources */,
+				B30736D11CF5BD9B00D793C0 /* LEFullTextEngine.mm in Sources */,
+				B39590A31D0D803100651C91 /* FMDatabase.m in Sources */,
+				B3A516701CEEE6E6003CFA3B /* ViewController.mm in Sources */,
+				B39590A61D0D803100651C91 /* FMDatabaseQueue.m in Sources */,
+				B39590A71D0D803100651C91 /* FMResultSet.m in Sources */,
+				B39590A51D0D803100651C91 /* FMDatabasePool.m in Sources */,
 				B3A5166D1CEEE6E6003CFA3B /* main.m in Sources */,
 				B3A5166A1CEEE6E6003CFA3B /* AppDelegate.m in Sources */,
+				B30736DE1CFFD3E100D793C0 /* jsoncpp.cpp in Sources */,
+				B39590951D0D66B200651C91 /* LEFTSQLDataImporter.m in Sources */,
+				B39590A41D0D803100651C91 /* FMDatabaseAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,8 +596,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT/rocksdb/include,
+					$SRCROOT/cppjieba/deps,
+				);
 				INFOPLIST_FILE = FullTextSearch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = $SRCROOT/rocksdb;
+				OTHER_LDFLAGS = "-lrocksdb";
 				PRODUCT_BUNDLE_IDENTIFIER = le.gear.FullTextSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -413,8 +614,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT/rocksdb/include,
+					$SRCROOT/cppjieba/deps,
+				);
 				INFOPLIST_FILE = FullTextSearch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = $SRCROOT/rocksdb;
+				OTHER_LDFLAGS = "-lrocksdb";
 				PRODUCT_BUNDLE_IDENTIFIER = le.gear.FullTextSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -489,6 +696,7 @@
 				B3A516911CEEE6E6003CFA3B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B3A516921CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearchTests" */ = {
 			isa = XCConfigurationList;
@@ -497,6 +705,7 @@
 				B3A516941CEEE6E6003CFA3B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B3A516951CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearchUITests" */ = {
 			isa = XCConfigurationList;
@@ -505,6 +714,7 @@
 				B3A516971CEEE6E6003CFA3B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
