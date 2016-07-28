@@ -7,7 +7,6 @@
 //
 
 #import "LEFTSQLDataImporter.h"
-#import "FMDB.h"
 #import "LEFTValue.h"
 #import "LEFullTextEngine.h"
 
@@ -32,33 +31,37 @@
 - (void)start
 {
     NSLog(@"start import sql data in thread <%@>", [NSThread currentThread]);
-    NSArray *paths = @[@"/Users/Leo/Documents/imchatdb/immsghis.db",
-                       @"/Users/Leo/Documents/imchatdb/sysmsghis.db",
-                       @"/Users/Leo/Documents/imchatdb/tmmsghis.db"];
     self.status = LEFTDataImporterStatusRunning;
+    if (self.importProcess != NULL) {
+        FMDatabase *database = [[FMDatabase alloc] initWithPath:self.dbPath];
+        if ([database open]) {
+            self.importProcess(database);
+        }
+        [database close];
+    }
     {
         FMDatabase *database = [[FMDatabase alloc] initWithPath:@"/Users/Leo/Documents/imchatdb/immsghis.db"];
         if ([database open]) {
             FMResultSet *set = [database executeQuery:@"SELECT * FROM instantmsg"];
-            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
-//            do {
-//                LEFTValue *value = [[LEFTValue alloc] init];
-//                value.identifier = [NSString stringWithFormat:@"msg_%ld", [set longForColumnIndex:0]];
-//                value.type = 1;
-//                value.content = [set stringForColumn:@"content"];
-//                
-//                [self.engine importValue:value];
-//                NSLog(@"import value <%@>", value);
-//            } while ([set next]);
+//            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
+            do {
+                LEFTValue *value = [[LEFTValue alloc] init];
+                value.identifier = [NSString stringWithFormat:@"msg_%ld", [set longForColumnIndex:0]];
+                value.type = 1;
+                value.content = [set stringForColumn:@"content"];
+                
+                [self.engine importValue:value];
+                NSLog(@"import value <%@>", value);
+            } while ([set next]);
             [database close];
         }
     }
-    
-    {
-        FMDatabase *database = [[FMDatabase alloc] initWithPath:@"/Users/Leo/Documents/imchatdb/sysmsghis.db"];
-        if ([database open]) {
-            FMResultSet *set = [database executeQuery:@"SELECT * FROM instantmsg"];
-            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
+//
+//    {
+//        FMDatabase *database = [[FMDatabase alloc] initWithPath:@"/Users/Leo/Documents/imchatdb/sysmsghis.db"];
+//        if ([database open]) {
+//            FMResultSet *set = [database executeQuery:@"SELECT * FROM instantmsg"];
+////            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
 //            do {
 //                LEFTValue *value = [[LEFTValue alloc] init];
 //                value.identifier = [NSString stringWithFormat:@"sysmsg_%ld", [set longForColumnIndex:0]];
@@ -68,15 +71,15 @@
 //                [self.engine importValue:value];
 //                NSLog(@"import value <%@>", value);
 //            } while ([set next]);
-            [database close];
-        }
-    }
-    
-    {
-        FMDatabase *database = [[FMDatabase alloc] initWithPath:@"/Users/Leo/Documents/imchatdb/tmmsghis.db"];
-        if ([database open]) {
-            FMResultSet *set = [database executeQuery:@"SELECT * FROM tribemsg"];
-            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM tribemsg"];
+//            [database close];
+//        }
+//    }
+//    
+//    {
+//        FMDatabase *database = [[FMDatabase alloc] initWithPath:@"/Users/Leo/Documents/imchatdb/tmmsghis.db"];
+//        if ([database open]) {
+//            FMResultSet *set = [database executeQuery:@"SELECT * FROM tribemsg"];
+////            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM tribemsg"];
 //            do {
 //                LEFTValue *value = [[LEFTValue alloc] init];
 //                value.identifier = [NSString stringWithFormat:@"tribemsg_%ld", [set longForColumnIndex:0]];
@@ -86,9 +89,9 @@
 //                [self.engine importValue:value];
 //                NSLog(@"import value <%@>", value);
 //            } while ([set next]);
-            [database close];
-        }
-    }
+//            [database close];
+//        }
+//    }
     NSLog(@"finish import sql data in thread <%@>", [NSThread currentThread]);
 }
 

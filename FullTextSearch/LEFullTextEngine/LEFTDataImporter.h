@@ -24,6 +24,8 @@ typedef enum : int32_t {
 
 @property (assign) LEFTDataImporterStatus status;
 
+- (LEFullTextEngine *)engine;
+
 - (void)start;
 - (void)pause;
 - (void)cancel;

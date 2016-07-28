@@ -9,15 +9,21 @@
 #import "LEFullTextEngine.h"
 #import "LEFTValue.h"
 
-#include "rocksdb/db.h"
-#include "rocksdb/env.h"
-#include "rocksdb/merge_operator.h"
 #include "json.h"
 
-#include <sqlite3.h>
-
-#define KEYWORD_DB_SUFFIX @"db"
+#define DB_SUFFIX @"idxdb"
 #define CURRENT_MAIN_DB_VER @"0.1"
+
+#define TEST_TABLE_EXIST @"SELECT name FROM sqlite_master WHERE type='table' AND name='%@';"
+#define CREATE_KEYWORD_TABLE_0_1 @"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT);"
+#define INSERT_KEYWORD_QUERY @"INSERT INTO `%@` (idf, type, updatetime, content, userinfo) VALUES (\"%s\", %d, %ld, \"%s\", \"%s\");"
+#define UPDATE_KEYWORD_QUERY @"UPDATE `%@` SET content=\"%s\", userinfo=\"\%s\" WHERE idf=\"%s\" AND type=%d;"
+#define CHECK_VALUE_ISEXIST @"SELECT `rowid`, `idf`, `type` FROM `%@` WHERE idf=\"%s\" AND type=%d;"
+
+// 模式切换
+#define RUNLOOP_M1 1
+//#define RUNLOOP_M2 1
+//#define GCD_M 1
 
 // 目前没有加密功能
 
@@ -27,15 +33,10 @@
  *
  */
 
-using namespace rocksdb;
-
-typedef std::shared_ptr<rocksdb::DB>        TRocksDBPtr;
-typedef std::shared_ptr<std::map<std::string, TRocksDBPtr>>  TMapRockDBPtr;
-
 @interface LEFullTextEngine ()
 {
-    TRocksDBPtr m_db;
-    TMapRockDBPtr m_db_map;
+    sqlite3 *_write_db;
+    sqlite3 *_read_db;
 }
 
 @property (nonatomic, copy) NSString *rootDirectory;
@@ -43,6 +44,11 @@ typedef std::shared_ptr<std::map<std::string, TRocksDBPtr>>  TMapRockDBPtr;
 @property (nonatomic, strong) LEFTPartcipleWrapper *partcipleWrapper;
 @property (nonatomic, strong) NSMutableArray *dataImporters;
 @property (nonatomic, strong) NSOperationQueue *importQueue;
+
+@property (nonatomic, strong) NSMutableArray *importValues;
+
+@property (nonatomic, strong) NSThread *importThread;
+@property (assign) BOOL stopImportThread;
 
 @end
 
@@ -101,198 +107,108 @@ typedef std::shared_ptr<std::map<std::string, TRocksDBPtr>>  TMapRockDBPtr;
     self.importQueue.maxConcurrentOperationCount = 1;
     [self.importQueue setSuspended:NO];
     
-    std::string main_db_path = [[self.rootDirectory stringByAppendingPathComponent:@"main_db"] cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    rocksdb::Options options;
-    options.create_if_missing = true;
-//    options.merge_operator.reset(new LEFTValueMergeOperator);
-    rocksdb::DB* db = nullptr;
-    rocksdb::Status status = rocksdb::DB::Open(options, main_db_path, &db);
-    m_db.reset(db);
-    
-    m_db_map.reset(new std::map<std::string, TRocksDBPtr>);
-    
-    if (!status.ok()) {
-        NSLog(@"create db fail code: <%d> subcode <%d>", status.code(), status.subcode());
+    const char *db_path = [[self _dbNameWithName:@"main"] cStringUsingEncoding:NSUTF8StringEncoding];
+    res = sqlite3_open(db_path, &_write_db);
+    if (res != 0) {
+        NSLog(@"open write db failed <%s>", strerror(errno));
     }
+    res = sqlite3_open(db_path, &_read_db);
+    if (res != 0) {
+        NSLog(@"open read db failed <%s>", strerror(errno));
+    }
+    
+    // 初始化import线程
+#if RUNLOOP_M1 == 1 || RUNLOOP_M2 == 1
+    self.importValues = [NSMutableArray array];
+    self.importThread = [[NSThread alloc] initWithTarget:self selector:@selector(_importThreadMain) object:nil];
+    [self.importThread start];
+    self.stopImportThread = NO;
+#elif GCD_M == 1
+    
+#endif
 }
 
 #pragma mark private method
 
-- (NSString *)_keywordDBPathWithWord:(NSString *)word
+- (NSString *)_dbNameWithName:(NSString *)name
 {
-    NSString *dbName = [self.rootDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", word, KEYWORD_DB_SUFFIX]];
+    NSString *dbName = [self.rootDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", name, DB_SUFFIX]];
     return dbName;
-}
-
-- (NSString *)_dbKeyWithValue:(LEFTValue *)value
-{
-    NSString *key = [NSString stringWithFormat:@"%d_%@", value.type, value.identifier];
-    return key;
 }
 
 #pragma mark main method
 
-- (NSArray *)searchValueWithKeyword:(NSString *)keyword
+- (LEFTSearchResult *)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time
 {
-    rocksdb::Status s;
-    std::string value;
-    Slice k = [keyword cStringUsingEncoding:NSUTF8StringEncoding];
-    s = m_db->Get(rocksdb::ReadOptions(), k, &value);
+    return [self searchValueWithKeyword:keyword until:time orderBy:LEFTSearchOrderTypeNone];
+}
 
-    if (!s.IsNotFound()) {
-        // 转成LEFTValue
-        NSString *valueString = [NSString stringWithCString:value.c_str() encoding:NSUTF8StringEncoding];
-        NSError *error = nil;
-        
-        NSDictionary *dicData = [NSJSONSerialization JSONObjectWithData:[valueString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
-        if (error) {
-            NSLog(@"json parse error %@", [error localizedDescription]);
-            return nil;
-        }
-        if (![dicData isKindOfClass:[NSDictionary class]]) {
-            NSLog(@"json parse type error, data is %@", [dicData description]);
-            return nil;
-        }
-        NSMutableArray *resultArray = [NSMutableArray array];
-        NSString *path = dicData[@"path"];
-        if (path != nil) {
-            rocksdb::DB *keywordDB = NULL;
-            rocksdb::Options options;
-            s = rocksdb::DB::Open(options, [path cStringUsingEncoding:NSUTF8StringEncoding], &keywordDB);
-            if (s.ok()) {
-                rocksdb::Iterator *it = keywordDB->NewIterator(rocksdb::ReadOptions());
-                for (it->SeekToFirst(); it->Valid(); it->Next()) {
-                    std::string tmp = it->value().ToString();
-                    NSDictionary *data = [NSJSONSerialization JSONObjectWithData:[NSData dataWithBytes:tmp.c_str() length:tmp.length()] options:0 error:&error];
-                    if (error == nil) {
-                        LEFTValue *value = [[LEFTValue alloc] initWithDictionary:data];
-                        [resultArray addObject:value];
-                    }
-                }
-            } else {
-                NSLog(@"status is %s", s.ToString().c_str());
-            }
-            delete keywordDB;
-        }
-        return resultArray;
-    } else {
-        NSLog(@"search db fail code: <%d> subcode <%d>", s.code(), s.subcode());
-        NSLog(@"status is %s", s.ToString().c_str());
-    }
-    
+- (LEFTSearchResult *)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time
+{
     return nil;
 }
 
-- (NSArray *)searchValueWithSentence:(NSString *)sentence
+- (LEFTSearchResult *)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)type
 {
-    NSArray *keywords = [self.partcipleWrapper extractKeywordsWithContent:sentence];
-    NSMutableArray *results = [NSMutableArray array];
-    for (NSString *keyword in keywords) {
-        NSArray *temp = [self searchValueWithKeyword:keyword];
-        if ([temp count] > 0) {
-            [results addObjectsFromArray:temp];
-        }
+    char *sql;
+    NSMutableString *nsSql = [[NSMutableString alloc] init];
+    [nsSql appendFormat:@"SELECT * FROM `%@` WHERE updatetime>=%.0lf", keyword, time];
+    if (type != LEFTSearchOrderTypeNone) {
+        [nsSql appendFormat:@" ORDER BY updatetime %@", type == LEFTSearchOrderTypeAsc ? @"ASC" : @"DESC"];
     }
-    return [NSArray arrayWithArray:results];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_stmt *stmt;
+    sqlite3_prepare(_read_db, sql, (int)strlen(sql), &stmt, NULL);
+    return [[LEFTSearchResult alloc] initWithStmt:stmt];
+}
+
+- (LEFTSearchResult *)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)type
+{
+    return nil;
 }
 
 - (BOOL)importValue:(LEFTValue *)value
 {
-    NSData *json = [value JSONRepresentation];
-    if ([value.keywords count] == 0) {
-        value.keywords = [self.partcipleWrapper minimumParticpleContent:value.content];
+#ifdef RUNLOOP_M1
+    @synchronized (self.importValues) {
+        [self.importValues addObject:value];
     }
-    BOOL flag = YES;
-    for (NSString *key in value.keywords) {
-        std::string key_string = [key cStringUsingEncoding:NSUTF8StringEncoding];
-        TRocksDBPtr db = (*m_db_map)[key_string];
-        if (db == nullptr) {
-            NSString *dbName = [self _keywordDBPathWithWord:key];
-            
-            rocksdb::DB *indb;
-            rocksdb::Options options;
-            options.create_if_missing = true;
-            rocksdb::Status s = rocksdb::DB::Open(options, [dbName cStringUsingEncoding:NSUTF8StringEncoding], &indb);
-            
-            if (s.ok()) {
-                db.reset(indb);
-                Slice k = [[self _dbKeyWithValue:value] cStringUsingEncoding:NSUTF8StringEncoding];
-                Slice *v = new Slice((const char*)json.bytes, json.length);
-                s = db->Put(rocksdb::WriteOptions(), k, *v);
-                if (s.ok()) {
-                    flag &= YES;
-                } else {
-                    NSLog(@"import value fail code: <%d> subcode <%d>", s.code(), s.subcode());
-                    flag &= NO;
-                }
-                delete v;
-            }
-        }
-    }
-    return flag;
+#elif defined RUNLOOP_M2
+    [self performSelector:@selector(_importValues:) onThread:self.importThread withObject:@[value] waitUntilDone:NO modes:@[NSRunLoopCommonModes]];
+#elif defined GCD_M
+#endif
+    return YES;
 }
 
 - (BOOL)importValues:(NSArray *)values
 {
-    clock_t start = clock();
-    std::map<std::string, rocksdb::DB *> db_map;
-    std::map<std::string, rocksdb::WriteBatch *> batch_map;
-    rocksdb::WriteBatch batch;
+#ifdef RUNLOOP_M1
+    @synchronized (self.importValues) {
+        [self.importValues addObjectsFromArray:values];
+    }
+#elif defined RUNLOOP_M2
+    [self performSelector:@selector(_importValues:) onThread:self.importThread withObject:values waitUntilDone:NO modes:@[NSRunLoopCommonModes]];
+#endif
+    return YES;
+}
+
+- (BOOL)_importValues:(NSArray *)values
+{
     for (LEFTValue *value in values) {
-        NSData *json = [value JSONRepresentation];
+        NSLog(@"start import <=> %@", value);
         if ([value.keywords count] == 0) {
-            value.keywords = [self.partcipleWrapper minimumParticpleContent:value.content];
+            value.keywords = [[self partcipleWrapper] minimumParticpleContent:value.content];
         }
-        for (NSString *key in value.keywords) {
-            NSString *dbName = [self _keywordDBPathWithWord:key];
-            std::string key_string = [key cStringUsingEncoding:NSUTF8StringEncoding];
-            rocksdb::WriteBatch *batch = batch_map[key_string];
-            TRocksDBPtr db = (*m_db_map)[key_string];
-            if (db == nullptr) {
-                rocksdb::DB *indb;
-                rocksdb::Options options;
-                options.create_if_missing = true;
-                rocksdb::Status s = rocksdb::DB::Open(options, [dbName cStringUsingEncoding:NSUTF8StringEncoding], &indb);
-                
-                if (s.ok()) {
-                    
-                    Slice main_key = key_string;
-                    NSDictionary *mainDic = @{@"ver": CURRENT_MAIN_DB_VER,
-                                              @"path": dbName};
-                    NSData *data = [NSJSONSerialization dataWithJSONObject:mainDic options:0 error:nil];
-                    Slice *main_value = new Slice((const char *)[data bytes], [data length]);
-                    m_db->Put(rocksdb::WriteOptions(), main_key, *main_value);
-                    
-                    db.reset(indb);
-                    delete main_value;
-                }
+        for (NSString *keyword in [value keywords]) {
+            unsigned long long row = [self _checkValueExist:value keyword:keyword];
+            if (row > 0) {
+                [self _updateValue:value keyword:keyword];
+            } else {
+                [self _insertValue:value keyword:keyword];
             }
-            if (batch == NULL) {
-                batch = new rocksdb::WriteBatch();
-                batch_map[key_string] = batch;
-            }
-            Slice k = [[self _dbKeyWithValue:value] cStringUsingEncoding:NSUTF8StringEncoding];
-            Slice *v = new Slice((const char*)json.bytes, json.length);
-            batch->Put(k, *v);
         }
     }
-    BOOL flag = YES;
-    for (auto iter : *m_db_map) {
-        rocksdb::WriteBatch *batch = batch_map[iter.first];
-        if (batch != NULL && iter.second != NULL) {
-            rocksdb::Status s = iter.second->Write(rocksdb::WriteOptions(), batch);
-            if (!s.ok()) {
-                NSLog(@"import value fail code: <%d> subcode <%d>", s.code(), s.subcode());
-                flag &= NO;
-            }
-            iter.second->Flush(rocksdb::FlushOptions());
-            delete batch;
-        }
-    }
-    
-    NSLog(@"use time <%lf> import value", double(clock()-start)/CLOCKS_PER_SEC);
-    return flag;
+    return YES;
 }
 
 - (BOOL)deleteValuesWithKeyword:(NSString *)keyword
@@ -313,6 +229,7 @@ typedef std::shared_ptr<std::map<std::string, TRocksDBPtr>>  TMapRockDBPtr;
     NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
         [importer start];
     }];
+    operation.queuePriority = NSOperationQueuePriorityNormal;
     [self.importQueue addOperation:operation];
 }
 
@@ -326,7 +243,7 @@ typedef std::shared_ptr<std::map<std::string, TRocksDBPtr>>  TMapRockDBPtr;
 - (void)resumeImporter:(id<LEFTDataImporter>)importer
 {
     if ([self.dataImporters containsObject:importer]) {
-        
+        [importer start];
     }
 }
 
@@ -343,5 +260,151 @@ typedef std::shared_ptr<std::map<std::string, TRocksDBPtr>>  TMapRockDBPtr;
     return [NSArray arrayWithArray:self.dataImporters];
 }
 
+#pragma mark private method
+
+- (unsigned long long)_checkValueExist:(LEFTValue *)value keyword:(NSString *)keyword
+{
+    char *sql, *table_name;
+    table_name = (char *)[keyword cStringUsingEncoding:NSUTF8StringEncoding];
+    NSString *nsSql = [NSString stringWithFormat:CHECK_VALUE_ISEXIST, keyword, [value.identifier cStringUsingEncoding:NSUTF8StringEncoding], value.type];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_stmt *stmt;
+    sqlite3_prepare(_write_db, sql, (int)strlen(sql), &stmt, NULL);
+    
+    unsigned long long row_id = 0;
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        row_id = sqlite3_column_int64(stmt, 0);
+        if (row_id > 0) {
+            break;
+        }
+    }
+    sqlite3_finalize(stmt);
+    return row_id;
+}
+
+- (void)_insertValue:(LEFTValue *)value keyword:(NSString *)keyword
+{
+    char *sql, *err_str, *table_name;
+    table_name = (char *)[keyword cStringUsingEncoding:NSUTF8StringEncoding];
+    NSString *nsSql = [NSString stringWithFormat:CREATE_KEYWORD_TABLE_0_1, keyword];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+    nsSql = [NSString stringWithFormat:INSERT_KEYWORD_QUERY, keyword,
+             [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
+             value.type,
+             (long)value.updateTime,
+             [value.content cStringUsingEncoding:NSUTF8StringEncoding],
+             [[value userInfoString] cStringUsingEncoding:NSUTF8StringEncoding]];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+//    sqlite3_stmt *stmt;
+//    sqlite3_prepare(_write_db, sql, (int)strlen(sql), &stmt, NULL);
+    int changed = sqlite3_changes(_write_db);
+    printf("%d changed", changed);
+}
+
+- (void)_updateValue:(LEFTValue *)value keyword:(NSString *)keyword
+{
+    char *sql, *err_str, *table_name;
+    table_name = (char *)[keyword cStringUsingEncoding:NSUTF8StringEncoding];
+    NSString *nsSql = [NSString stringWithFormat:UPDATE_KEYWORD_QUERY, keyword,
+                       [value.content cStringUsingEncoding:NSUTF8StringEncoding],
+                       [value.userInfoString cStringUsingEncoding:NSUTF8StringEncoding],
+                       [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
+                       value.type];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+//    sqlite3_stmt *stmt;
+//    sqlite3_prepare(_write_db, sql, (int)strlen(sql), &stmt, NULL);
+    int changed = sqlite3_changes(_write_db);
+    printf("%d changed", changed);
+}
+
+- (void)_importThreadMain
+{
+    @try {
+        while (!self.stopImportThread) {
+#ifdef RUNLOOP_M1
+            NSArray *tmpValues = nil;
+            @synchronized (self.importValues) {
+                if ([self.importValues count] > 0) {
+                    tmpValues = [NSArray arrayWithArray:self.importValues];
+                    [self.importValues removeAllObjects];
+                }
+            }
+            [self _importValues:tmpValues];
+#endif
+            
+            NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+            [runloop runUntilDate:[NSDate distantFuture]];
+        }
+    } @catch (NSException *exception) {
+        NSLog(@"..... %@", exception);
+    } @finally {
+        
+    }
+}
+
+@end
+
+
+@implementation LEFTSearchResult
+{
+    sqlite3_stmt *_stmt;
+    std::map<char *, int> _name_index;
+}
+
+- (void)dealloc
+{
+    sqlite3_finalize(_stmt);
+}
+
+- (instancetype)initWithStmt:(sqlite3_stmt *)stmt
+{
+    if (self = [super init]) {
+        _stmt = stmt;
+        if (_stmt != NULL) {
+            int col_count = sqlite3_column_count(_stmt);
+            for (int i = 0; i < col_count; i++) {
+                char *name = (char *)sqlite3_column_name(_stmt, i);
+                _name_index[name] = i;
+            }
+        }
+    }
+    return self;
+}
+
+- (LEFTValue *)next
+{
+    int res = sqlite3_step(_stmt);
+    if (res == SQLITE_ROW) {
+        LEFTValue *value = [[LEFTValue alloc] init];
+        char *key_name;
+        char *tmp_str_value;
+        // idf
+        key_name = (char *)"idf";
+        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index[key_name]);
+        value.identifier = [NSString stringWithUTF8String:tmp_str_value];
+        //"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT);"
+        // type
+        key_name = (char *)"type";
+        value.type = sqlite3_column_int(_stmt, _name_index[key_name]);
+        // updatetime
+        key_name = (char *)"updatetime";
+        value.updateTime = sqlite3_column_int64(_stmt, _name_index[key_name]);
+        // content
+        key_name = (char *)"content";
+        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index[key_name]);
+        value.content = [NSString stringWithUTF8String:tmp_str_value];
+        // userinfo
+        key_name = (char *)"userinfo";
+        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index[key_name]);
+        id obj = [NSJSONSerialization JSONObjectWithData:[NSData dataWithBytes:tmp_str_value length:strlen(tmp_str_value)] options:0 error:nil];
+        value.userInfo = obj;
+        
+        return value;
+    }
+    return nil;
+}
 
 @end

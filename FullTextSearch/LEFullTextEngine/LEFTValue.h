@@ -19,5 +19,6 @@
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 - (NSData *)JSONRepresentation;
+- (NSString *)userInfoString;
 
 @end

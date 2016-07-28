@@ -34,6 +34,22 @@
     return jsonData;
 }
 
+- (NSString *)userInfoString
+{
+    NSDictionary *userInfoTrans = [self _transUserInfo:self.userInfo] ? : @{};
+    NSError *error = nil;
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userInfoTrans options:0 error:&error];
+    
+    if (error == nil) {
+        NSString *res = [NSString stringWithCString:jsonData.bytes encoding:NSUTF8StringEncoding];
+        return res;
+    } else {
+        NSLog(@"trans LEFTValue userInfo error <%@>", [error localizedDescription]);
+        return @"";
+    }
+}
+
 - (id)_transUserInfo:(id)userInfo
 {
     id result = nil;

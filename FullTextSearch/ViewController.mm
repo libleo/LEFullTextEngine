@@ -69,7 +69,67 @@ char * copy_str(const char *src)
     NSLog(@"init time use %lf", double(clock() - begin)/CLOCKS_PER_SEC);
     
     LEFTSQLDataImporter *importor = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
+    __weak typeof(importor) weakImport = importor;
+    importor.dbPath = @"/Users/Leo/Documents/imchatdb/immsghis.db";
+    importor.importProcess = ^(FMDatabase *db) {
+        FMResultSet *set = [db executeQuery:@"SELECT * FROM instantmsg"];
+        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
+        while ([set next]) {
+            LEFTValue *value = [[LEFTValue alloc] init];
+            value.identifier = [NSString stringWithFormat:@"msg_%ld", [set longForColumn:@"guuid"]];
+            value.type = 1;
+            value.updateTime = [set longForColumn:@"dtime"];
+            value.content = [set stringForColumn:@"content"];
+            
+            [weakImport.engine importValue:value];
+//            NSLog(@"msg import value <%@>", value);
+        }
+    };
+    
+    LEFTSQLDataImporter *sysImportor = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
+    weakImport = sysImportor;
+    sysImportor.dbPath = @"/Users/Leo/Documents/imchatdb/sysmsghis.db";
+    sysImportor.importProcess = ^(FMDatabase *db) {
+        FMResultSet *set = [db executeQuery:@"SELECT * FROM systemmsg"];
+        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
+        while ([set next]) {
+            LEFTValue *value = [[LEFTValue alloc] init];
+            value.identifier = [NSString stringWithFormat:@"sys_%ld", [set longForColumn:@"guuid"]];
+            value.type = 2;
+            value.updateTime = [set longForColumn:@"dtime"];
+            value.content = [set stringForColumn:@"contentex"];
+            
+            [weakImport.engine importValue:value];
+//            NSLog(@"sys import value <%@>", value);
+        }
+    };
+    
+    LEFTSQLDataImporter *tribeImportor = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
+    weakImport = tribeImportor;
+    tribeImportor.dbPath = @"/Users/Leo/Documents/imchatdb/tmmsghis.db";
+    tribeImportor.importProcess = ^(FMDatabase *db) {
+        FMResultSet *set = [db executeQuery:@"SELECT * FROM tribemsg"];
+        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
+        while ([set next]) {
+            LEFTValue *value = [[LEFTValue alloc] init];
+            value.identifier = [NSString stringWithFormat:@"tm_%ld", [set longForColumn:@"guuid"]];
+            value.type = 3;
+            value.updateTime = [set longForColumn:@"dtime"];
+            value.content = [set stringForColumn:@"content"];
+            
+            [weakImport.engine importValue:value];
+//            NSLog(@"tribe import value <%@>", value);
+        }
+    };
+    
     [self.fulltextEngine startImporter:importor];
+    [self.fulltextEngine startImporter:sysImportor];
+    [self.fulltextEngine startImporter:tribeImportor];
+
+
+    
+//    LEFTSQLDataImporter *importor = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
+//    [self.fulltextEngine startImporter:importor];
 //    NSArray *words = [self.fulltextEngine.partcipleWrapper extractKeywordsWithContent:@"他来到了网易杭研大厦"];
 //    
 //    NSLog(@"extract words is %@", words);
@@ -89,8 +149,9 @@ char * copy_str(const char *src)
 //    
 //    [self.fulltextEngine importValues:@[ftValue, ftValue2]];
     
-//    NSArray *searchResult = [self.fulltextEngine searchValueWithSentence:@"测试你好"];
-//    for (LEFTValue *value in searchResult) {
+//    LEFTSearchResult *searchResult = [self.fulltextEngine searchValueWithKeyword:@"在" until:0];
+//    LEFTValue *value;
+//    while ((value = [searchResult next])) {
 //        NSLog(@"id:%@ <%d> %@ <> userInfo %@", value.identifier, value.type, value.content, value.userInfo);
 //    }
     

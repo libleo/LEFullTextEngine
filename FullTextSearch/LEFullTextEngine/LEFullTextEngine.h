@@ -11,8 +11,27 @@
 #import "LEFTDataImporter.h"
 #import "LEFTPartcipleWrapper.h"
 
+#include <sqlite3.h>
+
 @class LEFTValue;
 
+typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
+    LEFTSearchOrderTypeNone,
+    LEFTSearchOrderTypeAsc,
+    LEFTSearchOrderTypeDesc
+};
+
+@interface LEFTSearchResult : NSObject
+
+- (instancetype)initWithStmt:(sqlite3_stmt *)stmt;
+
+- (LEFTValue *)next;
+
+@end
+
+/*
+ * 搜索主封装
+ */
 @interface LEFullTextEngine : NSObject
 
 @property (nonatomic, readonly) NSString *rootDirectory;
@@ -20,9 +39,11 @@
 
 - (instancetype)initWithRootDirectory:(NSString *)rootDirectory;
 
-// 通过关键字搜索，返回LEFTValue的数组(search)
-- (NSArray *)searchValueWithKeyword:(NSString *)keyword;
-- (NSArray *)searchValueWithSentence:(NSString *)sentence;
+// 通过关键字搜索，返回迭代器
+- (LEFTSearchResult *)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time;
+- (LEFTSearchResult *)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time;
+- (LEFTSearchResult *)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)type;
+- (LEFTSearchResult *)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)type;
 // 记录关键字信息(add,update)
 - (BOOL)importValue:(LEFTValue *)value;
 - (BOOL)importValues:(NSArray *)values;

@@ -9,7 +9,11 @@
 #import <Foundation/Foundation.h>
 
 #import "LEFTDataImporter.h"
+#import "FMDB.h"
 
 @interface LEFTSQLDataImporter : NSObject <LEFTDataImporter>
+
+@property (nonatomic, copy) NSString *dbPath;
+@property (nonatomic, copy) void(^importProcess)(FMDatabase *db);
 
 @end
