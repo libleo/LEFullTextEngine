@@ -7,11 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B30736CD1CF478EC00D793C0 /* dict in Resources */ = {isa = PBXBuildFile; fileRef = B30736CC1CF478EC00D793C0 /* dict */; };
-		B30736D11CF5BD9B00D793C0 /* LEFullTextEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = B30736D01CF5BD9B00D793C0 /* LEFullTextEngine.mm */; };
-		B30736D41CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = B30736D31CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm */; };
-		B30736D71CF5BDDA00D793C0 /* LEFTValue.m in Sources */ = {isa = PBXBuildFile; fileRef = B30736D61CF5BDDA00D793C0 /* LEFTValue.m */; };
-		B30736DE1CFFD3E100D793C0 /* jsoncpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30736DD1CFFD3E100D793C0 /* jsoncpp.cpp */; };
+		B3779B321D4A2A3300C0F277 /* LEFullTextEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B311D4A2A3300C0F277 /* LEFullTextEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3779B391D4A2A3300C0F277 /* LEFullTextEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */; };
+		B3779B401D4A2A3300C0F277 /* LEFullTextEngineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B3779B3F1D4A2A3300C0F277 /* LEFullTextEngineTests.m */; };
+		B3779B441D4A2A3300C0F277 /* LEFullTextEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */; };
+		B3779B451D4A2A3300C0F277 /* LEFullTextEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3779B641D4A2B2F00C0F277 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B640A51D116E8F006E65F3 /* libiconv.tbd */; };
+		B3779B661D4A2B3700C0F277 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3779B651D4A2B3700C0F277 /* libsqlite3.tbd */; };
+		B3779B731D4A31C300C0F277 /* LEFTDataImporter.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B6C1D4A31C300C0F277 /* LEFTDataImporter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3779B741D4A31C300C0F277 /* LEFTPartcipleWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B6D1D4A31C300C0F277 /* LEFTPartcipleWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3779B751D4A31C300C0F277 /* LEFTPartcipleWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3779B6E1D4A31C300C0F277 /* LEFTPartcipleWrapper.mm */; };
+		B3779B761D4A31C300C0F277 /* LEFTValue.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B6F1D4A31C300C0F277 /* LEFTValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3779B771D4A31C300C0F277 /* LEFTValue.m in Sources */ = {isa = PBXBuildFile; fileRef = B3779B701D4A31C300C0F277 /* LEFTValue.m */; };
+		B3779B791D4A31C300C0F277 /* LEFullTextEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3779B721D4A31C300C0F277 /* LEFullTextEngine.mm */; };
+		B3779B7A1D4A34D900C0F277 /* LEFullTextEngine_Class.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B711D4A31C300C0F277 /* LEFullTextEngine_Class.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3779B7B1D4AFBBC00C0F277 /* dict in Resources */ = {isa = PBXBuildFile; fileRef = B30736CC1CF478EC00D793C0 /* dict */; };
+		B3779B7C1D4AFDE900C0F277 /* LEFTSQLDataImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */; };
+		B3779B7D1D4B026D00C0F277 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590981D0D803100651C91 /* FMDatabase.m */; };
+		B3779B7E1D4B027000C0F277 /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B395909A1D0D803100651C91 /* FMDatabaseAdditions.m */; };
+		B3779B7F1D4B027400C0F277 /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = B395909C1D0D803100651C91 /* FMDatabasePool.m */; };
+		B3779B801D4B027700C0F277 /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B395909E1D0D803100651C91 /* FMDatabaseQueue.m */; };
+		B3779B811D4B027A00C0F277 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590A11D0D803100651C91 /* FMResultSet.m */; };
+		B3779B821D4B029B00C0F277 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3779B651D4A2B3700C0F277 /* libsqlite3.tbd */; };
 		B39590951D0D66B200651C91 /* LEFTSQLDataImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */; };
 		B39590A31D0D803100651C91 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590981D0D803100651C91 /* FMDatabase.m */; };
 		B39590A41D0D803100651C91 /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B395909A1D0D803100651C91 /* FMDatabaseAdditions.m */; };
@@ -25,42 +42,61 @@
 		B3A516701CEEE6E6003CFA3B /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A5166F1CEEE6E6003CFA3B /* ViewController.mm */; };
 		B3A516721CEEE6E6003CFA3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3A516711CEEE6E6003CFA3B /* Assets.xcassets */; };
 		B3A516751CEEE6E6003CFA3B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3A516731CEEE6E6003CFA3B /* Main.storyboard */; };
-		B3A516801CEEE6E6003CFA3B /* FullTextSearchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A5167F1CEEE6E6003CFA3B /* FullTextSearchTests.m */; };
-		B3A5168B1CEEE6E6003CFA3B /* FullTextSearchUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A5168A1CEEE6E6003CFA3B /* FullTextSearchUITests.m */; };
 		B3A5169A1CEEF028003CFA3B /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A516991CEEF028003CFA3B /* libbz2.tbd */; };
 		B3A5169C1CEEF055003CFA3B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A5169B1CEEF055003CFA3B /* libz.tbd */; };
 		B3B640A61D116E8F006E65F3 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B640A51D116E8F006E65F3 /* libiconv.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B3A5167C1CEEE6E6003CFA3B /* PBXContainerItemProxy */ = {
+		B3779B3A1D4A2A3300C0F277 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3A5165D1CEEE6E6003CFA3B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3A516641CEEE6E6003CFA3B;
-			remoteInfo = FullTextSearch;
+			remoteGlobalIDString = B3779B2E1D4A2A3300C0F277;
+			remoteInfo = LEFullTextEngine;
 		};
-		B3A516871CEEE6E6003CFA3B /* PBXContainerItemProxy */ = {
+		B3779B421D4A2A3300C0F277 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3A5165D1CEEE6E6003CFA3B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3A516641CEEE6E6003CFA3B;
-			remoteInfo = FullTextSearch;
+			remoteGlobalIDString = B3779B2E1D4A2A3300C0F277;
+			remoteInfo = LEFullTextEngine;
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		B3779B491D4A2A3300C0F277 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3779B451D4A2A3300C0F277 /* LEFullTextEngine.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		B30736CC1CF478EC00D793C0 /* dict */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dict; path = cppjieba/dict; sourceTree = "<group>"; };
-		B30736CF1CF5BD9B00D793C0 /* LEFullTextEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFullTextEngine.h; sourceTree = "<group>"; };
-		B30736D01CF5BD9B00D793C0 /* LEFullTextEngine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFullTextEngine.mm; sourceTree = "<group>"; };
-		B30736D21CF5BDB400D793C0 /* LEFTPartcipleWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTPartcipleWrapper.h; sourceTree = "<group>"; };
-		B30736D31CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFTPartcipleWrapper.mm; sourceTree = "<group>"; };
-		B30736D51CF5BDDA00D793C0 /* LEFTValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTValue.h; sourceTree = "<group>"; };
-		B30736D61CF5BDDA00D793C0 /* LEFTValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTValue.m; sourceTree = "<group>"; };
-		B30736D81CF5BE1300D793C0 /* LEFTDataImporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEFTDataImporter.h; sourceTree = "<group>"; };
+		B30736CC1CF478EC00D793C0 /* dict */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dict; path = ../cppjieba/dict; sourceTree = "<group>"; };
 		B30736DB1CFFD3E100D793C0 /* json-forwards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "json-forwards.h"; sourceTree = "<group>"; };
 		B30736DC1CFFD3E100D793C0 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		B30736DD1CFFD3E100D793C0 /* jsoncpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsoncpp.cpp; sourceTree = "<group>"; };
+		B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LEFullTextEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3779B311D4A2A3300C0F277 /* LEFullTextEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEFullTextEngine.h; sourceTree = "<group>"; };
+		B3779B331D4A2A3300C0F277 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3779B381D4A2A3300C0F277 /* LEFullTextEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEFullTextEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3779B3F1D4A2A3300C0F277 /* LEFullTextEngineTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LEFullTextEngineTests.m; sourceTree = "<group>"; };
+		B3779B411D4A2A3300C0F277 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3779B651D4A2B3700C0F277 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		B3779B6C1D4A31C300C0F277 /* LEFTDataImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTDataImporter.h; sourceTree = "<group>"; };
+		B3779B6D1D4A31C300C0F277 /* LEFTPartcipleWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTPartcipleWrapper.h; sourceTree = "<group>"; };
+		B3779B6E1D4A31C300C0F277 /* LEFTPartcipleWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFTPartcipleWrapper.mm; sourceTree = "<group>"; };
+		B3779B6F1D4A31C300C0F277 /* LEFTValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTValue.h; sourceTree = "<group>"; };
+		B3779B701D4A31C300C0F277 /* LEFTValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTValue.m; sourceTree = "<group>"; };
+		B3779B711D4A31C300C0F277 /* LEFullTextEngine_Class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFullTextEngine_Class.h; sourceTree = "<group>"; };
+		B3779B721D4A31C300C0F277 /* LEFullTextEngine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFullTextEngine.mm; sourceTree = "<group>"; };
 		B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTSQLDataImporter.h; sourceTree = "<group>"; };
 		B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTSQLDataImporter.m; sourceTree = "<group>"; };
 		B39590971D0D803100651C91 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
@@ -85,12 +121,6 @@
 		B3A516711CEEE6E6003CFA3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B3A516741CEEE6E6003CFA3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B3A516761CEEE6E6003CFA3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3A5167B1CEEE6E6003CFA3B /* FullTextSearchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FullTextSearchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3A5167F1CEEE6E6003CFA3B /* FullTextSearchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FullTextSearchTests.m; sourceTree = "<group>"; };
-		B3A516811CEEE6E6003CFA3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3A516861CEEE6E6003CFA3B /* FullTextSearchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FullTextSearchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3A5168A1CEEE6E6003CFA3B /* FullTextSearchUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FullTextSearchUITests.m; sourceTree = "<group>"; };
-		B3A5168C1CEEE6E6003CFA3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3A516991CEEF028003CFA3B /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		B3A5169B1CEEF055003CFA3B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3A516A21CEEF993003CFA3B /* DictTrie.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DictTrie.hpp; sourceTree = "<group>"; };
@@ -112,28 +142,33 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B3779B2B1D4A2A3300C0F277 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3779B661D4A2B3700C0F277 /* libsqlite3.tbd in Frameworks */,
+				B3779B641D4A2B2F00C0F277 /* libiconv.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3779B351D4A2A3300C0F277 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3779B821D4B029B00C0F277 /* libsqlite3.tbd in Frameworks */,
+				B3779B391D4A2A3300C0F277 /* LEFullTextEngine.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3A516621CEEE6E6003CFA3B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3779B441D4A2A3300C0F277 /* LEFullTextEngine.framework in Frameworks */,
 				B3B640A61D116E8F006E65F3 /* libiconv.tbd in Frameworks */,
 				B39590AA1D0D806C00651C91 /* libsqlite3.0.tbd in Frameworks */,
 				B3A5169C1CEEF055003CFA3B /* libz.tbd in Frameworks */,
 				B3A5169A1CEEF028003CFA3B /* libbz2.tbd in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A516781CEEE6E6003CFA3B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A516831CEEE6E6003CFA3B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,13 +178,6 @@
 		B30736CE1CF5BD1E00D793C0 /* LEFullTextEngine */ = {
 			isa = PBXGroup;
 			children = (
-				B30736CF1CF5BD9B00D793C0 /* LEFullTextEngine.h */,
-				B30736D01CF5BD9B00D793C0 /* LEFullTextEngine.mm */,
-				B30736D21CF5BDB400D793C0 /* LEFTPartcipleWrapper.h */,
-				B30736D31CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm */,
-				B30736D51CF5BDDA00D793C0 /* LEFTValue.h */,
-				B30736D61CF5BDDA00D793C0 /* LEFTValue.m */,
-				B30736D81CF5BE1300D793C0 /* LEFTDataImporter.h */,
 				B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */,
 				B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */,
 			);
@@ -173,6 +201,33 @@
 				B30736DC1CFFD3E100D793C0 /* json.h */,
 			);
 			path = json;
+			sourceTree = "<group>";
+		};
+		B3779B301D4A2A3300C0F277 /* LEFullTextEngine */ = {
+			isa = PBXGroup;
+			children = (
+				B30736CC1CF478EC00D793C0 /* dict */,
+				B3A516A11CEEF993003CFA3B /* cppjieba */,
+				B3779B311D4A2A3300C0F277 /* LEFullTextEngine.h */,
+				B3779B6C1D4A31C300C0F277 /* LEFTDataImporter.h */,
+				B3779B6D1D4A31C300C0F277 /* LEFTPartcipleWrapper.h */,
+				B3779B6E1D4A31C300C0F277 /* LEFTPartcipleWrapper.mm */,
+				B3779B6F1D4A31C300C0F277 /* LEFTValue.h */,
+				B3779B701D4A31C300C0F277 /* LEFTValue.m */,
+				B3779B711D4A31C300C0F277 /* LEFullTextEngine_Class.h */,
+				B3779B721D4A31C300C0F277 /* LEFullTextEngine.mm */,
+				B3779B331D4A2A3300C0F277 /* Info.plist */,
+			);
+			path = LEFullTextEngine;
+			sourceTree = "<group>";
+		};
+		B3779B3E1D4A2A3300C0F277 /* LEFullTextEngineTests */ = {
+			isa = PBXGroup;
+			children = (
+				B3779B3F1D4A2A3300C0F277 /* LEFullTextEngineTests.m */,
+				B3779B411D4A2A3300C0F277 /* Info.plist */,
+			);
+			path = LEFullTextEngineTests;
 			sourceTree = "<group>";
 		};
 		B39590961D0D803100651C91 /* fmdb */ = {
@@ -199,10 +254,10 @@
 			children = (
 				B30736CE1CF5BD1E00D793C0 /* LEFullTextEngine */,
 				B3A516A01CEEF97E003CFA3B /* Vendors */,
+				B3779B301D4A2A3300C0F277 /* LEFullTextEngine */,
+				B3779B3E1D4A2A3300C0F277 /* LEFullTextEngineTests */,
 				B3A5169D1CEEF938003CFA3B /* Frameworks */,
 				B3A516671CEEE6E6003CFA3B /* FullTextSearch */,
-				B3A5167E1CEEE6E6003CFA3B /* FullTextSearchTests */,
-				B3A516891CEEE6E6003CFA3B /* FullTextSearchUITests */,
 				B3A516661CEEE6E6003CFA3B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -211,8 +266,8 @@
 			isa = PBXGroup;
 			children = (
 				B3A516651CEEE6E6003CFA3B /* FullTextSearch.app */,
-				B3A5167B1CEEE6E6003CFA3B /* FullTextSearchTests.xctest */,
-				B3A516861CEEE6E6003CFA3B /* FullTextSearchUITests.xctest */,
+				B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */,
+				B3779B381D4A2A3300C0F277 /* LEFullTextEngineTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,27 +295,10 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		B3A5167E1CEEE6E6003CFA3B /* FullTextSearchTests */ = {
-			isa = PBXGroup;
-			children = (
-				B3A5167F1CEEE6E6003CFA3B /* FullTextSearchTests.m */,
-				B3A516811CEEE6E6003CFA3B /* Info.plist */,
-			);
-			path = FullTextSearchTests;
-			sourceTree = "<group>";
-		};
-		B3A516891CEEE6E6003CFA3B /* FullTextSearchUITests */ = {
-			isa = PBXGroup;
-			children = (
-				B3A5168A1CEEE6E6003CFA3B /* FullTextSearchUITests.m */,
-				B3A5168C1CEEE6E6003CFA3B /* Info.plist */,
-			);
-			path = FullTextSearchUITests;
-			sourceTree = "<group>";
-		};
 		B3A5169D1CEEF938003CFA3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3779B651D4A2B3700C0F277 /* libsqlite3.tbd */,
 				B3B640A51D116E8F006E65F3 /* libiconv.tbd */,
 				B39590A91D0D806C00651C91 /* libsqlite3.0.tbd */,
 				B3A5169B1CEEF055003CFA3B /* libz.tbd */,
@@ -274,8 +312,6 @@
 			children = (
 				B39590961D0D803100651C91 /* fmdb */,
 				B30736D91CFFD3E100D793C0 /* jsoncpp */,
-				B30736CC1CF478EC00D793C0 /* dict */,
-				B3A516A11CEEF993003CFA3B /* cppjieba */,
 			);
 			name = Vendors;
 			sourceTree = "<group>";
@@ -300,65 +336,81 @@
 				B3A516B01CEEF993003CFA3B /* Unicode.hpp */,
 			);
 			name = cppjieba;
-			path = cppjieba/include/cppjieba;
+			path = ../cppjieba/include/cppjieba;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		B3779B2C1D4A2A3300C0F277 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3779B7A1D4A34D900C0F277 /* LEFullTextEngine_Class.h in Headers */,
+				B3779B321D4A2A3300C0F277 /* LEFullTextEngine.h in Headers */,
+				B3779B761D4A31C300C0F277 /* LEFTValue.h in Headers */,
+				B3779B741D4A31C300C0F277 /* LEFTPartcipleWrapper.h in Headers */,
+				B3779B731D4A31C300C0F277 /* LEFTDataImporter.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
-		B3A516641CEEE6E6003CFA3B /* FullTextSearch */ = {
+		B3779B2E1D4A2A3300C0F277 /* LEFullTextEngine */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3A5168F1CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearch" */;
+			buildConfigurationList = B3779B461D4A2A3300C0F277 /* Build configuration list for PBXNativeTarget "LEFullTextEngine" */;
 			buildPhases = (
-				B3A516981CEEE721003CFA3B /* ShellScript */,
-				B3A516611CEEE6E6003CFA3B /* Sources */,
-				B3A516621CEEE6E6003CFA3B /* Frameworks */,
-				B3A516631CEEE6E6003CFA3B /* Resources */,
+				B3779B2A1D4A2A3300C0F277 /* Sources */,
+				B3779B2B1D4A2A3300C0F277 /* Frameworks */,
+				B3779B2C1D4A2A3300C0F277 /* Headers */,
+				B3779B2D1D4A2A3300C0F277 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+			);
+			name = LEFullTextEngine;
+			productName = LEFullTextEngine;
+			productReference = B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B3779B371D4A2A3300C0F277 /* LEFullTextEngineTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3779B4A1D4A2A3300C0F277 /* Build configuration list for PBXNativeTarget "LEFullTextEngineTests" */;
+			buildPhases = (
+				B3779B341D4A2A3300C0F277 /* Sources */,
+				B3779B351D4A2A3300C0F277 /* Frameworks */,
+				B3779B361D4A2A3300C0F277 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3779B3B1D4A2A3300C0F277 /* PBXTargetDependency */,
+			);
+			name = LEFullTextEngineTests;
+			productName = LEFullTextEngineTests;
+			productReference = B3779B381D4A2A3300C0F277 /* LEFullTextEngineTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B3A516641CEEE6E6003CFA3B /* FullTextSearch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3A5168F1CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearch" */;
+			buildPhases = (
+				B3A516611CEEE6E6003CFA3B /* Sources */,
+				B3A516621CEEE6E6003CFA3B /* Frameworks */,
+				B3A516631CEEE6E6003CFA3B /* Resources */,
+				B3779B491D4A2A3300C0F277 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3779B431D4A2A3300C0F277 /* PBXTargetDependency */,
 			);
 			name = FullTextSearch;
 			productName = FullTextSearch;
 			productReference = B3A516651CEEE6E6003CFA3B /* FullTextSearch.app */;
 			productType = "com.apple.product-type.application";
-		};
-		B3A5167A1CEEE6E6003CFA3B /* FullTextSearchTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3A516921CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearchTests" */;
-			buildPhases = (
-				B3A516771CEEE6E6003CFA3B /* Sources */,
-				B3A516781CEEE6E6003CFA3B /* Frameworks */,
-				B3A516791CEEE6E6003CFA3B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B3A5167D1CEEE6E6003CFA3B /* PBXTargetDependency */,
-			);
-			name = FullTextSearchTests;
-			productName = FullTextSearchTests;
-			productReference = B3A5167B1CEEE6E6003CFA3B /* FullTextSearchTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		B3A516851CEEE6E6003CFA3B /* FullTextSearchUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3A516951CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearchUITests" */;
-			buildPhases = (
-				B3A516821CEEE6E6003CFA3B /* Sources */,
-				B3A516831CEEE6E6003CFA3B /* Frameworks */,
-				B3A516841CEEE6E6003CFA3B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B3A516881CEEE6E6003CFA3B /* PBXTargetDependency */,
-			);
-			name = FullTextSearchUITests;
-			productName = FullTextSearchUITests;
-			productReference = B3A516861CEEE6E6003CFA3B /* FullTextSearchUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -369,16 +421,14 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = leo;
 				TargetAttributes = {
+					B3779B2E1D4A2A3300C0F277 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					B3779B371D4A2A3300C0F277 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					B3A516641CEEE6E6003CFA3B = {
 						CreatedOnToolsVersion = 7.3.1;
-					};
-					B3A5167A1CEEE6E6003CFA3B = {
-						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = B3A516641CEEE6E6003CFA3B;
-					};
-					B3A516851CEEE6E6003CFA3B = {
-						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = B3A516641CEEE6E6003CFA3B;
 					};
 				};
 			};
@@ -396,13 +446,28 @@
 			projectRoot = "";
 			targets = (
 				B3A516641CEEE6E6003CFA3B /* FullTextSearch */,
-				B3A5167A1CEEE6E6003CFA3B /* FullTextSearchTests */,
-				B3A516851CEEE6E6003CFA3B /* FullTextSearchUITests */,
+				B3779B2E1D4A2A3300C0F277 /* LEFullTextEngine */,
+				B3779B371D4A2A3300C0F277 /* LEFullTextEngineTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B3779B2D1D4A2A3300C0F277 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3779B7B1D4AFBBC00C0F277 /* dict in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3779B361D4A2A3300C0F277 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3A516631CEEE6E6003CFA3B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -410,50 +475,40 @@
 				B39590A81D0D803100651C91 /* Info.plist in Resources */,
 				B3A516721CEEE6E6003CFA3B /* Assets.xcassets in Resources */,
 				B3A516751CEEE6E6003CFA3B /* Main.storyboard in Resources */,
-				B30736CD1CF478EC00D793C0 /* dict in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A516791CEEE6E6003CFA3B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A516841CEEE6E6003CFA3B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		B3A516981CEEE721003CFA3B /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
+/* Begin PBXSourcesBuildPhase section */
+		B3779B2A1D4A2A3300C0F277 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
+				B3779B771D4A31C300C0F277 /* LEFTValue.m in Sources */,
+				B3779B791D4A31C300C0F277 /* LEFullTextEngine.mm in Sources */,
+				B3779B751D4A31C300C0F277 /* LEFTPartcipleWrapper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "echo \"start rocksdb build\"\n\ncd $SRCROOT/rocksdb\nmake static_lib\n\nif (($? == 0))\nthen\n    echo \"rocksdb build succeed!\"\nelse\n    echo \"rocksdb build failed!\"\nfi";
 		};
-/* End PBXShellScriptBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
+		B3779B341D4A2A3300C0F277 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3779B7D1D4B026D00C0F277 /* FMDatabase.m in Sources */,
+				B3779B401D4A2A3300C0F277 /* LEFullTextEngineTests.m in Sources */,
+				B3779B811D4B027A00C0F277 /* FMResultSet.m in Sources */,
+				B3779B7F1D4B027400C0F277 /* FMDatabasePool.m in Sources */,
+				B3779B7C1D4AFDE900C0F277 /* LEFTSQLDataImporter.m in Sources */,
+				B3779B7E1D4B027000C0F277 /* FMDatabaseAdditions.m in Sources */,
+				B3779B801D4B027700C0F277 /* FMDatabaseQueue.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3A516611CEEE6E6003CFA3B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B30736D71CF5BDDA00D793C0 /* LEFTValue.m in Sources */,
-				B30736D41CF5BDB400D793C0 /* LEFTPartcipleWrapper.mm in Sources */,
-				B30736D11CF5BD9B00D793C0 /* LEFullTextEngine.mm in Sources */,
 				B39590A31D0D803100651C91 /* FMDatabase.m in Sources */,
 				B3A516701CEEE6E6003CFA3B /* ViewController.mm in Sources */,
 				B39590A61D0D803100651C91 /* FMDatabaseQueue.m in Sources */,
@@ -461,40 +516,23 @@
 				B39590A51D0D803100651C91 /* FMDatabasePool.m in Sources */,
 				B3A5166D1CEEE6E6003CFA3B /* main.m in Sources */,
 				B3A5166A1CEEE6E6003CFA3B /* AppDelegate.m in Sources */,
-				B30736DE1CFFD3E100D793C0 /* jsoncpp.cpp in Sources */,
 				B39590951D0D66B200651C91 /* LEFTSQLDataImporter.m in Sources */,
 				B39590A41D0D803100651C91 /* FMDatabaseAdditions.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A516771CEEE6E6003CFA3B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3A516801CEEE6E6003CFA3B /* FullTextSearchTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A516821CEEE6E6003CFA3B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3A5168B1CEEE6E6003CFA3B /* FullTextSearchUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B3A5167D1CEEE6E6003CFA3B /* PBXTargetDependency */ = {
+		B3779B3B1D4A2A3300C0F277 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3A516641CEEE6E6003CFA3B /* FullTextSearch */;
-			targetProxy = B3A5167C1CEEE6E6003CFA3B /* PBXContainerItemProxy */;
+			target = B3779B2E1D4A2A3300C0F277 /* LEFullTextEngine */;
+			targetProxy = B3779B3A1D4A2A3300C0F277 /* PBXContainerItemProxy */;
 		};
-		B3A516881CEEE6E6003CFA3B /* PBXTargetDependency */ = {
+		B3779B431D4A2A3300C0F277 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3A516641CEEE6E6003CFA3B /* FullTextSearch */;
-			targetProxy = B3A516871CEEE6E6003CFA3B /* PBXContainerItemProxy */;
+			target = B3779B2E1D4A2A3300C0F277 /* LEFullTextEngine */;
+			targetProxy = B3779B421D4A2A3300C0F277 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -510,6 +548,74 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		B3779B471D4A2A3300C0F277 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = $SRCROOT/cppjieba/deps;
+				INFOPLIST_FILE = LEFullTextEngine/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = le.gear.LEFullTextEngine;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3779B481D4A2A3300C0F277 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = $SRCROOT/cppjieba/deps;
+				INFOPLIST_FILE = LEFullTextEngine/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = le.gear.LEFullTextEngine;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3779B4B1D4A2A3300C0F277 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = LEFullTextEngineTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = le.gear.LEFullTextEngineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3779B4C1D4A2A3300C0F277 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = LEFullTextEngineTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = le.gear.LEFullTextEngineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		B3A5168D1CEEE6E6003CFA3B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -595,15 +701,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				HEADER_SEARCH_PATHS = (
-					$SRCROOT/rocksdb/include,
-					$SRCROOT/cppjieba/deps,
-				);
+				HEADER_SEARCH_PATHS = $SRCROOT/cppjieba/deps;
 				INFOPLIST_FILE = FullTextSearch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = $SRCROOT/rocksdb;
-				OTHER_LDFLAGS = "-lrocksdb";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = le.gear.FullTextSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -613,73 +717,37 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				HEADER_SEARCH_PATHS = (
-					$SRCROOT/rocksdb/include,
-					$SRCROOT/cppjieba/deps,
-				);
+				HEADER_SEARCH_PATHS = $SRCROOT/cppjieba/deps;
 				INFOPLIST_FILE = FullTextSearch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = $SRCROOT/rocksdb;
-				OTHER_LDFLAGS = "-lrocksdb";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = le.gear.FullTextSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		B3A516931CEEE6E6003CFA3B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = FullTextSearchTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = le.gear.FullTextSearchTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FullTextSearch.app/Contents/MacOS/FullTextSearch";
-			};
-			name = Debug;
-		};
-		B3A516941CEEE6E6003CFA3B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = FullTextSearchTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = le.gear.FullTextSearchTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FullTextSearch.app/Contents/MacOS/FullTextSearch";
-			};
-			name = Release;
-		};
-		B3A516961CEEE6E6003CFA3B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = FullTextSearchUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = le.gear.FullTextSearchUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = FullTextSearch;
-			};
-			name = Debug;
-		};
-		B3A516971CEEE6E6003CFA3B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = FullTextSearchUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = le.gear.FullTextSearchUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = FullTextSearch;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B3779B461D4A2A3300C0F277 /* Build configuration list for PBXNativeTarget "LEFullTextEngine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3779B471D4A2A3300C0F277 /* Debug */,
+				B3779B481D4A2A3300C0F277 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		B3779B4A1D4A2A3300C0F277 /* Build configuration list for PBXNativeTarget "LEFullTextEngineTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3779B4B1D4A2A3300C0F277 /* Debug */,
+				B3779B4C1D4A2A3300C0F277 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		B3A516601CEEE6E6003CFA3B /* Build configuration list for PBXProject "FullTextSearch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -694,24 +762,6 @@
 			buildConfigurations = (
 				B3A516901CEEE6E6003CFA3B /* Debug */,
 				B3A516911CEEE6E6003CFA3B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3A516921CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearchTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3A516931CEEE6E6003CFA3B /* Debug */,
-				B3A516941CEEE6E6003CFA3B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3A516951CEEE6E6003CFA3B /* Build configuration list for PBXNativeTarget "FullTextSearchUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3A516961CEEE6E6003CFA3B /* Debug */,
-				B3A516971CEEE6E6003CFA3B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

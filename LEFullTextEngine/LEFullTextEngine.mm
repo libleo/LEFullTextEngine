@@ -6,26 +6,35 @@
 //  Copyright © 2016年 leo. All rights reserved.
 //
 
-#import "LEFullTextEngine.h"
+#import "LEFullTextEngine_Class.h"
+#import "LEFTPartcipleWrapper.h"
+#import "LEFTDataImporter.h"
 #import "LEFTValue.h"
 
 #include "json.h"
+#include <sqlite3.h>
 
 #define DB_SUFFIX @"idxdb"
 #define CURRENT_MAIN_DB_VER @"0.1"
 
 #define TEST_TABLE_EXIST @"SELECT name FROM sqlite_master WHERE type='table' AND name='%@';"
 #define CREATE_KEYWORD_TABLE_0_1 @"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT);"
-#define INSERT_KEYWORD_QUERY @"INSERT INTO `%@` (idf, type, updatetime, content, userinfo) VALUES (\"%s\", %d, %ld, \"%s\", \"%s\");"
-#define UPDATE_KEYWORD_QUERY @"UPDATE `%@` SET content=\"%s\", userinfo=\"\%s\" WHERE idf=\"%s\" AND type=%d;"
+#define INSERT_KEYWORD_QUERY @"INSERT INTO `%@` (idf, type, updatetime, content, userinfo) VALUES (\"%@\", %d, %ld, \"%@\", \"%@\");"
+#define UPDATE_KEYWORD_QUERY @"UPDATE `%@` SET content=\"%@\", userinfo=\"\%@\" WHERE idf=\"%@\" AND type=%d;"
 #define CHECK_VALUE_ISEXIST @"SELECT `rowid`, `idf`, `type` FROM `%@` WHERE idf=\"%s\" AND type=%d;"
+#define DELETE_TABLE @"DELETE FROM `%@`"
 
 // 模式切换
-#define RUNLOOP_M1 1
-//#define RUNLOOP_M2 1
+#define RUNLOOP_M
 //#define GCD_M 1
 
 // 目前没有加密功能
+
+@interface LEFTSearchResult ()
+
+- (instancetype)initWithStmt:(sqlite3_stmt *)stmt;
+
+@end
 
 /*
  * 关键字 作为 tablename
@@ -37,6 +46,9 @@
 {
     sqlite3 *_write_db;
     sqlite3 *_read_db;
+#if GCD_M == 1
+    dispatch_queue_t _import_queue;
+#endif
 }
 
 @property (nonatomic, copy) NSString *rootDirectory;
@@ -45,10 +57,10 @@
 @property (nonatomic, strong) NSMutableArray *dataImporters;
 @property (nonatomic, strong) NSOperationQueue *importQueue;
 
-@property (nonatomic, strong) NSMutableArray *importValues;
-
+#ifdef RUNLOOP_M
 @property (nonatomic, strong) NSThread *importThread;
 @property (assign) BOOL stopImportThread;
+#endif
 
 @end
 
@@ -104,7 +116,7 @@
     self.dataImporters = [NSMutableArray array];
     self.importQueue = [[NSOperationQueue alloc] init];
     
-    self.importQueue.maxConcurrentOperationCount = 1;
+    self.importQueue.maxConcurrentOperationCount = 3;
     [self.importQueue setSuspended:NO];
     
     const char *db_path = [[self _dbNameWithName:@"main"] cStringUsingEncoding:NSUTF8StringEncoding];
@@ -118,13 +130,12 @@
     }
     
     // 初始化import线程
-#if RUNLOOP_M1 == 1 || RUNLOOP_M2 == 1
-    self.importValues = [NSMutableArray array];
+#ifdef RUNLOOP_M
     self.importThread = [[NSThread alloc] initWithTarget:self selector:@selector(_importThreadMain) object:nil];
     [self.importThread start];
     self.stopImportThread = NO;
 #elif GCD_M == 1
-    
+    _import_queue = dispatch_queue_create("import_queue", NULL);
 #endif
 }
 
@@ -169,50 +180,63 @@
 
 - (BOOL)importValue:(LEFTValue *)value
 {
-#ifdef RUNLOOP_M1
-    @synchronized (self.importValues) {
-        [self.importValues addObject:value];
-    }
-#elif defined RUNLOOP_M2
+#ifdef RUNLOOP_M
     [self performSelector:@selector(_importValues:) onThread:self.importThread withObject:@[value] waitUntilDone:NO modes:@[NSRunLoopCommonModes]];
 #elif defined GCD_M
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(_import_queue, ^{
+        [weakSelf _importValues:@[value]];
+    });
 #endif
     return YES;
 }
 
 - (BOOL)importValues:(NSArray *)values
 {
-#ifdef RUNLOOP_M1
-    @synchronized (self.importValues) {
-        [self.importValues addObjectsFromArray:values];
-    }
-#elif defined RUNLOOP_M2
+#ifdef RUNLOOP_M
     [self performSelector:@selector(_importValues:) onThread:self.importThread withObject:values waitUntilDone:NO modes:@[NSRunLoopCommonModes]];
+#elif defined GCD_M
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(_import_queue, ^{
+        [weakSelf _importValues:values];
+    });
 #endif
     return YES;
 }
 
 - (BOOL)_importValues:(NSArray *)values
 {
-    for (LEFTValue *value in values) {
-        NSLog(@"start import <=> %@", value);
-        if ([value.keywords count] == 0) {
-            value.keywords = [[self partcipleWrapper] minimumParticpleContent:value.content];
-        }
-        for (NSString *keyword in [value keywords]) {
-            unsigned long long row = [self _checkValueExist:value keyword:keyword];
-            if (row > 0) {
-                [self _updateValue:value keyword:keyword];
-            } else {
-                [self _insertValue:value keyword:keyword];
+    @autoreleasepool {
+        for (LEFTValue *value in values) {
+            NSLog(@"start import <=> %@", value);
+            if ([value.keywords count] == 0) {
+                value.keywords = [[self partcipleWrapper] minimumParticpleContent:value.content];
+            }
+            for (NSString *keyword in [value keywords]) {
+                unsigned long long row = [self _checkValueExist:value keyword:keyword];
+                if (row > 0) {
+                    [self _updateValue:value keyword:keyword];
+                } else {
+                    [self _insertValue:value keyword:keyword];
+                }
             }
         }
+        return YES;
     }
-    return YES;
 }
 
 - (BOOL)deleteValuesWithKeyword:(NSString *)keyword
 {
+    @autoreleasepool {
+#ifdef RUNLOOP_M
+        [self performSelector:@selector(_deleteTable:) onThread:self.importThread withObject:keyword waitUntilDone:NO modes:@[NSRunLoopCommonModes]];
+#elif defined GCD_M
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(_import_queue, ^{
+            [weakSelf _deleteTable:keyword];
+        });
+#endif
+    }
     return NO;
 }
 
@@ -264,8 +288,7 @@
 
 - (unsigned long long)_checkValueExist:(LEFTValue *)value keyword:(NSString *)keyword
 {
-    char *sql, *table_name;
-    table_name = (char *)[keyword cStringUsingEncoding:NSUTF8StringEncoding];
+    char *sql;
     NSString *nsSql = [NSString stringWithFormat:CHECK_VALUE_ISEXIST, keyword, [value.identifier cStringUsingEncoding:NSUTF8StringEncoding], value.type];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_stmt *stmt;
@@ -284,69 +307,68 @@
 
 - (void)_insertValue:(LEFTValue *)value keyword:(NSString *)keyword
 {
-    char *sql, *err_str, *table_name;
-    table_name = (char *)[keyword cStringUsingEncoding:NSUTF8StringEncoding];
+    char *sql, *err_str;
     NSString *nsSql = [NSString stringWithFormat:CREATE_KEYWORD_TABLE_0_1, keyword];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
     nsSql = [NSString stringWithFormat:INSERT_KEYWORD_QUERY, keyword,
-             [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
+             value.identifier,
              value.type,
              (long)value.updateTime,
-             [value.content cStringUsingEncoding:NSUTF8StringEncoding],
-             [[value userInfoString] cStringUsingEncoding:NSUTF8StringEncoding]];
+             value.content,
+             value.userInfoString];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
-//    sqlite3_stmt *stmt;
-//    sqlite3_prepare(_write_db, sql, (int)strlen(sql), &stmt, NULL);
-    int changed = sqlite3_changes(_write_db);
-    printf("%d changed", changed);
+//    int changed = sqlite3_changes(_write_db);
+//    printf("%d changed\n", changed);
 }
 
 - (void)_updateValue:(LEFTValue *)value keyword:(NSString *)keyword
 {
-    char *sql, *err_str, *table_name;
-    table_name = (char *)[keyword cStringUsingEncoding:NSUTF8StringEncoding];
+    char *sql, *err_str;
     NSString *nsSql = [NSString stringWithFormat:UPDATE_KEYWORD_QUERY, keyword,
-                       [value.content cStringUsingEncoding:NSUTF8StringEncoding],
-                       [value.userInfoString cStringUsingEncoding:NSUTF8StringEncoding],
-                       [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
+                       value.content,
+                       value.userInfoString,
+                       value.identifier,
                        value.type];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
-//    sqlite3_stmt *stmt;
-//    sqlite3_prepare(_write_db, sql, (int)strlen(sql), &stmt, NULL);
-    int changed = sqlite3_changes(_write_db);
-    printf("%d changed", changed);
+//    int changed = sqlite3_changes(_write_db);
+//    printf("%d changed\n", changed);
 }
 
+- (void)_deleteTable:(NSString *)tableName
+{
+    char *sql, *err_str;
+    NSString *nsSql = [NSString stringWithFormat:DELETE_TABLE, tableName];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+//    int changed = sqlite3_changes(_write_db);
+//    printf("%d changed\n", changed);
+}
+
+#ifdef RUNLOOP_M
 - (void)_importThreadMain
 {
-    @try {
-        while (!self.stopImportThread) {
-#ifdef RUNLOOP_M1
-            NSArray *tmpValues = nil;
-            @synchronized (self.importValues) {
-                if ([self.importValues count] > 0) {
-                    tmpValues = [NSArray arrayWithArray:self.importValues];
-                    [self.importValues removeAllObjects];
-                }
+    @autoreleasepool {
+        @try {
+            while (!self.stopImportThread) {
+                NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+                [runloop runUntilDate:[NSDate distantFuture]];
             }
-            [self _importValues:tmpValues];
-#endif
+        } @catch (NSException *exception) {
+            NSLog(@"..... %@", exception);
+        } @finally {
             
-            NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-            [runloop runUntilDate:[NSDate distantFuture]];
         }
-    } @catch (NSException *exception) {
-        NSLog(@"..... %@", exception);
-    } @finally {
-        
     }
 }
+#endif
 
 @end
 
+
+#pragma mark - LEFTSearchResult
 
 @implementation LEFTSearchResult
 {

@@ -91,7 +91,7 @@ using namespace std;
 
 - (void)_init
 {
-    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSBundle *mainBundle = [NSBundle bundleForClass:[LEFTPartcipleWrapper class]];
     
     self.dictPath = [mainBundle pathForResource:@"dict/jieba.dict" ofType:@"utf8"] ;;
     self.hmmPath = [mainBundle pathForResource:@"dict/hmm_model" ofType:@"utf8"];

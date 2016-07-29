@@ -48,6 +48,16 @@
                ReferencedContainer = "container:FullTextSearch.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3779B371D4A2A3300C0F277"
+               BuildableName = "LEFullTextEngineTests.xctest"
+               BlueprintName = "LEFullTextEngineTests"
+               ReferencedContainer = "container:FullTextSearch.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

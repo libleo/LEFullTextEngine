@@ -8,11 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import "LEFTDataImporter.h"
-#import "LEFTPartcipleWrapper.h"
-
-#include <sqlite3.h>
-
+@protocol LEFTDataImporter;
+@class LEFTPartcipleWrapper;
 @class LEFTValue;
 
 typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
@@ -22,8 +19,6 @@ typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
 };
 
 @interface LEFTSearchResult : NSObject
-
-- (instancetype)initWithStmt:(sqlite3_stmt *)stmt;
 
 - (LEFTValue *)next;
 

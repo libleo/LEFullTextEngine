@@ -8,7 +8,7 @@
 
 #import "LEFTSQLDataImporter.h"
 #import "LEFTValue.h"
-#import "LEFullTextEngine.h"
+#import "LEFullTextEngine_Class.h"
 
 @interface LEFTSQLDataImporter ()
 
@@ -24,6 +24,7 @@
 {
     if (self = [super init]) {
         self.engine = engine;
+        self.status = LEFTDataImporterStatusPending;
     }
     return self;
 }
@@ -39,75 +40,23 @@
         }
         [database close];
     }
-    {
-        FMDatabase *database = [[FMDatabase alloc] initWithPath:@"/Users/Leo/Documents/imchatdb/immsghis.db"];
-        if ([database open]) {
-            FMResultSet *set = [database executeQuery:@"SELECT * FROM instantmsg"];
-//            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
-            do {
-                LEFTValue *value = [[LEFTValue alloc] init];
-                value.identifier = [NSString stringWithFormat:@"msg_%ld", [set longForColumnIndex:0]];
-                value.type = 1;
-                value.content = [set stringForColumn:@"content"];
-                
-                [self.engine importValue:value];
-                NSLog(@"import value <%@>", value);
-            } while ([set next]);
-            [database close];
-        }
-    }
-//
-//    {
-//        FMDatabase *database = [[FMDatabase alloc] initWithPath:@"/Users/Leo/Documents/imchatdb/sysmsghis.db"];
-//        if ([database open]) {
-//            FMResultSet *set = [database executeQuery:@"SELECT * FROM instantmsg"];
-////            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
-//            do {
-//                LEFTValue *value = [[LEFTValue alloc] init];
-//                value.identifier = [NSString stringWithFormat:@"sysmsg_%ld", [set longForColumnIndex:0]];
-//                value.type = 1;
-//                value.content = [set stringForColumn:@"content"];
-//                
-//                [self.engine importValue:value];
-//                NSLog(@"import value <%@>", value);
-//            } while ([set next]);
-//            [database close];
-//        }
-//    }
-//    
-//    {
-//        FMDatabase *database = [[FMDatabase alloc] initWithPath:@"/Users/Leo/Documents/imchatdb/tmmsghis.db"];
-//        if ([database open]) {
-//            FMResultSet *set = [database executeQuery:@"SELECT * FROM tribemsg"];
-////            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM tribemsg"];
-//            do {
-//                LEFTValue *value = [[LEFTValue alloc] init];
-//                value.identifier = [NSString stringWithFormat:@"tribemsg_%ld", [set longForColumnIndex:0]];
-//                value.type = 1;
-//                value.content = [set stringForColumn:@"content"];
-//                
-//                [self.engine importValue:value];
-//                NSLog(@"import value <%@>", value);
-//            } while ([set next]);
-//            [database close];
-//        }
-//    }
     NSLog(@"finish import sql data in thread <%@>", [NSThread currentThread]);
+    self.status = LEFTDataImporterStatusFinished;
 }
 
 - (void)pause
 {
-    self.status = LEFTDataImporterStatusRunning;
+    self.status = LEFTDataImporterStatusFinished;
 }
 
 - (void)cancel
 {
-    self.status = LEFTDataImporterStatusRunning;
+    self.status = LEFTDataImporterStatusFinished;
 }
 
 - (void)stop
 {
-    self.status = LEFTDataImporterStatusRunning;
+    self.status = LEFTDataImporterStatusFinished;
 }
 
 @end

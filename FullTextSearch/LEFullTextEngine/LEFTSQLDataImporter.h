@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "LEFTDataImporter.h"
+#import <LEFullTextEngine/LEFullTextEngine.h>
 #import "FMDB.h"
 
 @interface LEFTSQLDataImporter : NSObject <LEFTDataImporter>
