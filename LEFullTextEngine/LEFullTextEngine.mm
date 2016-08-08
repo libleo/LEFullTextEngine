@@ -56,6 +56,8 @@
 @property (nonatomic, strong) LEFTPartcipleWrapper *partcipleWrapper;
 @property (nonatomic, strong) NSMutableArray *dataImporters;
 @property (nonatomic, strong) NSOperationQueue *importQueue;
+@property (nonatomic, strong) NSThread *fetchThread;
+@property (assign) BOOL stopFetchThread;
 
 #ifdef RUNLOOP_M
 @property (nonatomic, strong) NSThread *importThread;
@@ -119,6 +121,8 @@
     self.importQueue.maxConcurrentOperationCount = 3;
     [self.importQueue setSuspended:NO];
     
+    int safe = sqlite3_threadsafe();
+    NSLog(@"thread safe %d", safe);
     const char *db_path = [[self _dbNameWithName:@"main"] cStringUsingEncoding:NSUTF8StringEncoding];
     res = sqlite3_open(db_path, &_write_db);
     if (res != 0) {
@@ -129,6 +133,8 @@
         NSLog(@"open read db failed <%s>", strerror(errno));
     }
     
+    // 初始化fetch线程
+    self.fetchThread = [[NSThread alloc] initWithTarget:self selector:@selector(_fetchThreadMain) object:nil];
     // 初始化import线程
 #ifdef RUNLOOP_M
     self.importThread = [[NSThread alloc] initWithTarget:self selector:@selector(_importThreadMain) object:nil];
@@ -149,33 +155,80 @@
 
 #pragma mark main method
 
-- (LEFTSearchResult *)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time
+- (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
 {
-    return [self searchValueWithKeyword:keyword until:time orderBy:LEFTSearchOrderTypeNone];
+    [self searchValueWithKeywords:keywords until:time customType:NSUIntegerMax orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
 }
 
-- (LEFTSearchResult *)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time
+- (void)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
 {
-    return nil;
+    [self searchValueWithKeywords:@[keyword] until:time customType:NSUIntegerMax orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
 }
 
-- (LEFTSearchResult *)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)type
+- (void)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
 {
-    char *sql;
-    NSMutableString *nsSql = [[NSMutableString alloc] init];
-    [nsSql appendFormat:@"SELECT * FROM `%@` WHERE updatetime>=%.0lf", keyword, time];
-    if (type != LEFTSearchOrderTypeNone) {
-        [nsSql appendFormat:@" ORDER BY updatetime %@", type == LEFTSearchOrderTypeAsc ? @"ASC" : @"DESC"];
+    NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
+    if ([keywords count] > 0) {
+        [self searchValueWithKeywords:keywords until:time customType:NSUIntegerMax orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
+    } else {
+        handler(nil);
     }
-    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
-    sqlite3_stmt *stmt;
-    sqlite3_prepare(_read_db, sql, (int)strlen(sql), &stmt, NULL);
-    return [[LEFTSearchResult alloc] initWithStmt:stmt];
 }
 
-- (LEFTSearchResult *)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)type
+- (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
 {
-    return nil;
+    NSMutableString *nsSql = [[NSMutableString alloc] init];
+    [keywords enumerateObjectsUsingBlock:^(NSString *keyword, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (idx > 0) {
+            [nsSql appendString:@" INTERSECT "];
+        }
+        [nsSql appendFormat:@"SELECT * FROM `%@` WHERE updatetime>=%.0lf", keyword, time];
+        if (customType != NSUIntegerMax) {
+            [nsSql appendFormat:@" AND type=%zd ", customType];
+        }
+        if (orderType != LEFTSearchOrderTypeNone) {
+            [nsSql appendFormat:@" ORDER BY updatetime %@", orderType == LEFTSearchOrderTypeAsc ? @"ASC" : @"DESC"];
+        }
+    }];
+    NSDictionary *extraParams = @{@"sql" : nsSql,
+                                  @"handler" : handler};
+    [NSThread detachNewThreadSelector:@selector(_performFetchSQL:) toTarget:self withObject:extraParams];
+
+//    if (handler) {
+//        handler(result);
+//    }
+}
+
+- (void)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time customType:(NSUInteger)customType orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
+{
+    [self searchValueWithKeywords:@[keyword] until:time customType:customType orderBy:orderType resultHandler:handler];
+}
+
+- (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
+{
+    NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
+    if ([keywords count] > 0) {
+        [self searchValueWithKeywords:keywords until:time customType:customType orderBy:orderType resultHandler:handler];
+    } else {
+        handler(nil);
+    }
+}
+
+- (void)_performFetchSQL:(NSDictionary *)params
+{
+    @autoreleasepool {
+        NSString *fetchSQL = [[params objectForKey:@"sql"] copy];
+        LEFTResultHandler handler = [params objectForKey:@"handler"];
+        char *sql;
+        sql = (char *)[fetchSQL cStringUsingEncoding:NSUTF8StringEncoding];
+        sqlite3_stmt *stmt;
+        sqlite3_prepare(_read_db, sql, (int)strlen(sql), &stmt, NULL);
+        LEFTSearchResult *result = [[LEFTSearchResult alloc] initWithStmt:stmt];
+        
+        if (handler) {
+            handler(result);
+        }
+    }
 }
 
 - (BOOL)importValue:(LEFTValue *)value
@@ -347,6 +400,22 @@
 //    printf("%d changed\n", changed);
 }
 
+- (void)_fetchThreadMain
+{
+    @autoreleasepool {
+        @try {
+            while (!self.stopFetchThread) {
+                NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+                [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+            }
+        } @catch (NSException *exception) {
+            NSLog(@"fetch thread <Exception> %@", exception);
+        } @finally {
+            
+        }
+    }
+}
+
 #ifdef RUNLOOP_M
 - (void)_importThreadMain
 {
@@ -354,10 +423,10 @@
         @try {
             while (!self.stopImportThread) {
                 NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-                [runloop runUntilDate:[NSDate distantFuture]];
+                [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
             }
         } @catch (NSException *exception) {
-            NSLog(@"..... %@", exception);
+            NSLog(@"import thread <Exception> %@", exception);
         } @finally {
             
         }

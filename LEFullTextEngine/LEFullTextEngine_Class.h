@@ -11,6 +11,9 @@
 @protocol LEFTDataImporter;
 @class LEFTPartcipleWrapper;
 @class LEFTValue;
+@class LEFTSearchResult;
+
+typedef void(^LEFTResultHandler)(LEFTSearchResult *result);
 
 typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
     LEFTSearchOrderTypeNone,
@@ -35,10 +38,13 @@ typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
 - (instancetype)initWithRootDirectory:(NSString *)rootDirectory;
 
 // 通过关键字搜索，返回迭代器
-- (LEFTSearchResult *)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time;
-- (LEFTSearchResult *)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time;
-- (LEFTSearchResult *)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)type;
-- (LEFTSearchResult *)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)type;
+- (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler;
+- (void)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler;
+- (void)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler;
+
+- (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
+- (void)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time customType:(NSUInteger)customType orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
+- (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
 // 记录关键字信息(add,update)
 - (BOOL)importValue:(LEFTValue *)value;
 - (BOOL)importValues:(NSArray *)values;
