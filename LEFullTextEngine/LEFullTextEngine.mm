@@ -46,6 +46,7 @@
 {
     sqlite3 *_write_db;
     sqlite3 *_read_db;
+    sqlite3 *_main_thread_db;
 #if GCD_M == 1
     dispatch_queue_t _import_queue;
 #endif
@@ -132,6 +133,10 @@
     if (res != 0) {
         NSLog(@"open read db failed <%s>", strerror(errno));
     }
+    res = sqlite3_open(db_path, &_main_thread_db);
+    if (res != 0) {
+        NSLog(@"open main_thread db failed <%s>", strerror(errno));
+    }
     
     // 初始化fetch线程
     self.fetchThread = [[NSThread alloc] initWithTarget:self selector:@selector(_fetchThreadMain) object:nil];
@@ -155,14 +160,28 @@
 
 #pragma mark main method
 
+- (BOOL)hasKeyword:(NSString *)keyword
+{
+    char *sql;
+    NSString *nsSql = [NSString stringWithFormat:@"SELECT `rowid` FROM `sqlite_master` WHERE tblname=\"%@\";", keyword];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_stmt *stmt;
+    sqlite3_prepare(_main_thread_db, sql, (int)strlen(sql), &stmt, NULL);
+    
+    unsigned long long row_id = 0;
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        row_id = sqlite3_column_int64(stmt, 0);
+        if (row_id > 0) {
+            break;
+        }
+    }
+    sqlite3_finalize(stmt);
+    return row_id > 0;
+}
+
 - (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
 {
     [self searchValueWithKeywords:keywords until:time customType:NSUIntegerMax orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
-}
-
-- (void)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
-{
-    [self searchValueWithKeywords:@[keyword] until:time customType:NSUIntegerMax orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
 }
 
 - (void)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
@@ -177,8 +196,9 @@
 
 - (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
 {
+    NSArray *filterKeywords = [self _filterKeywords:keywords];
     NSMutableString *nsSql = [[NSMutableString alloc] init];
-    [keywords enumerateObjectsUsingBlock:^(NSString *keyword, NSUInteger idx, BOOL * _Nonnull stop) {
+    [filterKeywords enumerateObjectsUsingBlock:^(NSString *keyword, NSUInteger idx, BOOL * _Nonnull stop) {
         if (idx > 0) {
             [nsSql appendString:@" INTERSECT "];
         }
@@ -197,11 +217,6 @@
 //    if (handler) {
 //        handler(result);
 //    }
-}
-
-- (void)searchValueWithKeyword:(NSString *)keyword until:(NSTimeInterval)time customType:(NSUInteger)customType orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
-{
-    [self searchValueWithKeywords:@[keyword] until:time customType:customType orderBy:orderType resultHandler:handler];
 }
 
 - (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
@@ -251,6 +266,19 @@
 #elif defined GCD_M
     __weak typeof(self) weakSelf = self;
     dispatch_async(_import_queue, ^{
+        [weakSelf _importValues:values];
+    });
+#endif
+    return YES;
+}
+
+- (BOOL)importValuesSync:(NSArray *)values
+{
+#ifdef RUNLOOP_M
+    [self performSelector:@selector(_importValues:) onThread:self.importThread withObject:values waitUntilDone:YES modes:@[NSRunLoopCommonModes]];
+#elif defined GCD_M
+    __weak typeof(self) weakSelf = self;
+    dispatch_sync(_import_queue, ^{
         [weakSelf _importValues:values];
     });
 #endif
@@ -338,6 +366,17 @@
 }
 
 #pragma mark private method
+
+- (NSArray *)_filterKeywords:(NSArray *)keywords
+{
+    NSMutableArray *filterKeywords = [NSMutableArray arrayWithCapacity:[keywords count]];
+    for (NSString *keyword in keywords) {
+        if ([self hasKeyword:keyword]) {
+            [filterKeywords addObject:keyword];
+        }
+    }
+    return [NSArray arrayWithArray:filterKeywords];
+}
 
 - (unsigned long long)_checkValueExist:(LEFTValue *)value keyword:(NSString *)keyword
 {

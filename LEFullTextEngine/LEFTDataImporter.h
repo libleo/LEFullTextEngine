@@ -28,8 +28,8 @@ typedef enum : int32_t {
 
 - (void)start;
 - (void)pause;
+- (void)resume;
 - (void)cancel;
-- (void)stop;
 
 @end
 
