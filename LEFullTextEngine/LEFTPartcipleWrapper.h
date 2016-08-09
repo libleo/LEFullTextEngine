@@ -10,6 +10,8 @@
 
 @interface LEFTPartcipleWrapper : NSObject
 
++ (instancetype)shareInstance;
+
 // 最小化分词(颗粒度细)
 - (NSArray *)minimumParticpleContent:(NSString *)content;
 // 简单分词

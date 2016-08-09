@@ -115,7 +115,7 @@
         }
     }
     
-    self.partcipleWrapper = [[LEFTPartcipleWrapper alloc] init];
+    self.partcipleWrapper = [LEFTPartcipleWrapper shareInstance];
     self.dataImporters = [NSMutableArray array];
     self.importQueue = [[NSOperationQueue alloc] init];
     

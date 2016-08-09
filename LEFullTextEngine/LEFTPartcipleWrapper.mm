@@ -81,6 +81,16 @@ using namespace std;
     m_spJiebaKeywordExtractor.reset();
 }
 
++ (instancetype)shareInstance
+{
+    static LEFTPartcipleWrapper *shareInstance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        shareInstance = [[LEFTPartcipleWrapper alloc] init];
+    });
+    return shareInstance;
+}
+
 - (instancetype)init
 {
     if (self = [super init]) {
