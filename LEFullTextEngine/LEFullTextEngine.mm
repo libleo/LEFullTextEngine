@@ -30,6 +30,13 @@
 
 // 目前没有加密功能
 
+extern "C" {
+    static void DoNothingRunLoopCallback(void *info)
+    {
+        
+    }
+}
+
 @interface LEFTSearchResult ()
 
 - (instancetype)initWithStmt:(sqlite3_stmt *)stmt;
@@ -140,6 +147,7 @@
     
     // 初始化fetch线程
     self.fetchThread = [[NSThread alloc] initWithTarget:self selector:@selector(_fetchThreadMain) object:nil];
+    [self.fetchThread start];
     // 初始化import线程
 #ifdef RUNLOOP_M
     self.importThread = [[NSThread alloc] initWithTarget:self selector:@selector(_importThreadMain) object:nil];
@@ -212,11 +220,7 @@
     }];
     NSDictionary *extraParams = @{@"sql" : nsSql,
                                   @"handler" : handler};
-    [NSThread detachNewThreadSelector:@selector(_performFetchSQL:) toTarget:self withObject:extraParams];
-
-//    if (handler) {
-//        handler(result);
-//    }
+    [self performSelector:@selector(_performFetchSQL:) onThread:self.fetchThread withObject:extraParams waitUntilDone:NO];
 }
 
 - (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
@@ -442,16 +446,17 @@
 - (void)_fetchThreadMain
 {
     @autoreleasepool {
-        @try {
-            while (!self.stopFetchThread) {
-                NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-                [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-            }
-        } @catch (NSException *exception) {
-            NSLog(@"fetch thread <Exception> %@", exception);
-        } @finally {
-            
-        }
+        CFRunLoopSourceContext context = {0};
+        context.perform = DoNothingRunLoopCallback;
+        
+        CFRunLoopSourceRef source = CFRunLoopSourceCreate(NULL, 0, &context);
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+        
+        // Keep processing events until the runloop is stopped.
+        CFRunLoopRun();
+        
+        CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+        CFRelease(source);
     }
 }
 
@@ -459,16 +464,17 @@
 - (void)_importThreadMain
 {
     @autoreleasepool {
-        @try {
-            while (!self.stopImportThread) {
-                NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-                [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-            }
-        } @catch (NSException *exception) {
-            NSLog(@"import thread <Exception> %@", exception);
-        } @finally {
-            
-        }
+        CFRunLoopSourceContext context = {0};
+        context.perform = DoNothingRunLoopCallback;
+        
+        CFRunLoopSourceRef source = CFRunLoopSourceCreate(NULL, 0, &context);
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+        
+        // Keep processing events until the runloop is stopped.
+        CFRunLoopRun();
+        
+        CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+        CFRelease(source);
     }
 }
 #endif
