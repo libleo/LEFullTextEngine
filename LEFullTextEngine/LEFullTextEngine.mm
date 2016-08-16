@@ -171,7 +171,7 @@ extern "C" {
 - (BOOL)hasKeyword:(NSString *)keyword
 {
     char *sql;
-    NSString *nsSql = [NSString stringWithFormat:@"SELECT `rowid` FROM `sqlite_master` WHERE tblname=\"%@\";", keyword];
+    NSString *nsSql = [NSString stringWithFormat:@"SELECT `rowid` FROM `sqlite_master` WHERE name=\"%@\"", keyword];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_stmt *stmt;
     sqlite3_prepare(_main_thread_db, sql, (int)strlen(sql), &stmt, NULL);
