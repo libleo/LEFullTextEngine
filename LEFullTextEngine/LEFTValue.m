@@ -21,6 +21,25 @@
     return self;
 }
 
+- (NSString *)description
+{
+    NSString *superDes = [super description];
+    NSString *des = [NSString stringWithFormat:@"%@ {\n\
+                     type: %zd\n\
+                     identifier: %@\n\
+                     content: %@\n\
+                     userInfo: %@\n\
+                     tag: %@\n\
+                     ",
+                     superDes,
+                     self.type,
+                     self.identifier,
+                     self.content,
+                     self.userInfo,
+                     self.tag];
+    return des;
+}
+
 - (NSData *)JSONRepresentation
 {
     NSDictionary *userInfoTrans = [self _transUserInfo:self.userInfo] ? : @{};

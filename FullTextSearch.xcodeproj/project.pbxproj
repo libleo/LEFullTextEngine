@@ -19,7 +19,7 @@
 		B3779B751D4A31C300C0F277 /* LEFTPartcipleWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3779B6E1D4A31C300C0F277 /* LEFTPartcipleWrapper.mm */; };
 		B3779B761D4A31C300C0F277 /* LEFTValue.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B6F1D4A31C300C0F277 /* LEFTValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3779B771D4A31C300C0F277 /* LEFTValue.m in Sources */ = {isa = PBXBuildFile; fileRef = B3779B701D4A31C300C0F277 /* LEFTValue.m */; };
-		B3779B791D4A31C300C0F277 /* LEFullTextEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3779B721D4A31C300C0F277 /* LEFullTextEngine.mm */; };
+		B3779B791D4A31C300C0F277 /* LEFullTextEngine_Class.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3779B721D4A31C300C0F277 /* LEFullTextEngine_Class.mm */; };
 		B3779B7A1D4A34D900C0F277 /* LEFullTextEngine_Class.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B711D4A31C300C0F277 /* LEFullTextEngine_Class.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3779B7B1D4AFBBC00C0F277 /* dict in Resources */ = {isa = PBXBuildFile; fileRef = B30736CC1CF478EC00D793C0 /* dict */; };
 		B3779B7C1D4AFDE900C0F277 /* LEFTSQLDataImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */; };
@@ -96,7 +96,7 @@
 		B3779B6F1D4A31C300C0F277 /* LEFTValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTValue.h; sourceTree = "<group>"; };
 		B3779B701D4A31C300C0F277 /* LEFTValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTValue.m; sourceTree = "<group>"; };
 		B3779B711D4A31C300C0F277 /* LEFullTextEngine_Class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFullTextEngine_Class.h; sourceTree = "<group>"; };
-		B3779B721D4A31C300C0F277 /* LEFullTextEngine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFullTextEngine.mm; sourceTree = "<group>"; };
+		B3779B721D4A31C300C0F277 /* LEFullTextEngine_Class.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFullTextEngine_Class.mm; sourceTree = "<group>"; };
 		B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTSQLDataImporter.h; sourceTree = "<group>"; };
 		B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTSQLDataImporter.m; sourceTree = "<group>"; };
 		B39590971D0D803100651C91 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
@@ -215,7 +215,7 @@
 				B3779B6F1D4A31C300C0F277 /* LEFTValue.h */,
 				B3779B701D4A31C300C0F277 /* LEFTValue.m */,
 				B3779B711D4A31C300C0F277 /* LEFullTextEngine_Class.h */,
-				B3779B721D4A31C300C0F277 /* LEFullTextEngine.mm */,
+				B3779B721D4A31C300C0F277 /* LEFullTextEngine_Class.mm */,
 				B3779B331D4A2A3300C0F277 /* Info.plist */,
 			);
 			path = LEFullTextEngine;
@@ -486,7 +486,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3779B771D4A31C300C0F277 /* LEFTValue.m in Sources */,
-				B3779B791D4A31C300C0F277 /* LEFullTextEngine.mm in Sources */,
+				B3779B791D4A31C300C0F277 /* LEFullTextEngine_Class.mm in Sources */,
 				B3779B751D4A31C300C0F277 /* LEFTPartcipleWrapper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -739,6 +739,7 @@
 				B3779B481D4A2A3300C0F277 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B3779B4A1D4A2A3300C0F277 /* Build configuration list for PBXNativeTarget "LEFullTextEngineTests" */ = {
 			isa = XCConfigurationList;
@@ -747,6 +748,7 @@
 				B3779B4C1D4A2A3300C0F277 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B3A516601CEEE6E6003CFA3B /* Build configuration list for PBXProject "FullTextSearch" */ = {
 			isa = XCConfigurationList;

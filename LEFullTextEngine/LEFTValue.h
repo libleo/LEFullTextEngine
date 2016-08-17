@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSArray *keywords; // 关联的keywords
 @property (nonatomic, strong) NSDictionary *userInfo; // 附加信息
 @property (nonatomic, assign) NSTimeInterval updateTime;
+@property (nonatomic, copy) NSString *tag;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 - (NSData *)JSONRepresentation;

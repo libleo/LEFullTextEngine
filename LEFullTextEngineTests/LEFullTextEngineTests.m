@@ -41,6 +41,7 @@
             value.type = 1;
             value.updateTime = [set longForColumn:@"dtime"];
             value.content = [set stringForColumn:@"content"];
+            value.tag = [set stringForColumn:@"uid"];
             
             [weakImport.engine importValuesSync:@[value]];
             i++;
@@ -62,6 +63,7 @@
             value.type = 2;
             value.updateTime = [set longForColumn:@"dtime"];
             value.content = [set stringForColumn:@"contentex"];
+            value.tag = [set stringForColumn:@"uid"];
             
             [weakImport.engine importValuesSync:@[value]];
             i++;
@@ -83,6 +85,7 @@
             value.type = 3;
             value.updateTime = [set longForColumn:@"dtime"];
             value.content = [set stringForColumn:@"content"];
+            value.tag = [set stringForColumn:@"roomid"];
             
             [weakImport.engine importValuesSync:@[value]];
             i++;
@@ -102,25 +105,25 @@
 
 - (void)testStaticPerformance
 {
-    while (YES) {
-        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-        [runloop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
-    }
+//    while (YES) {
+//        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+//        [runloop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+//    }
 }
 
 - (void)testImport {
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
-//    [self.fulltextEngine startImporter:self.imImporter];
-//    [self.fulltextEngine startImporter:self.sysImporter];
-//    [self.fulltextEngine startImporter:self.tmImporter];
-//    
-//    while ([self.imImporter status] != LEFTDataImporterStatusFinished ||
-//           [self.sysImporter status] != LEFTDataImporterStatusFinished ||
-//           [self.tmImporter status] != LEFTDataImporterStatusFinished) {
-//        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-//        [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
-//    }
+    [self.fulltextEngine startImporter:self.imImporter];
+    [self.fulltextEngine startImporter:self.sysImporter];
+    [self.fulltextEngine startImporter:self.tmImporter];
+    
+    while ([self.imImporter status] != LEFTDataImporterStatusFinished ||
+           [self.sysImporter status] != LEFTDataImporterStatusFinished ||
+           [self.tmImporter status] != LEFTDataImporterStatusFinished) {
+        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+        [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
+    }
 }
 
 - (void)testSearch

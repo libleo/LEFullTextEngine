@@ -42,9 +42,10 @@ typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
 // 通过关键字搜索
 - (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler;
 - (void)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler;
+- (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
+// ==>
+- (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
 
-- (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
-- (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
 // 记录关键字信息(add,update)
 - (BOOL)importValue:(LEFTValue *)value;
 - (BOOL)importValues:(NSArray *)values;

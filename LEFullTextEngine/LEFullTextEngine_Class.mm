@@ -17,10 +17,7 @@
 #define DB_SUFFIX @"idxdb"
 #define CURRENT_MAIN_DB_VER @"0.1"
 
-#define TEST_TABLE_EXIST @"SELECT name FROM sqlite_master WHERE type='table' AND name='%@';"
-#define CREATE_KEYWORD_TABLE_0_1 @"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT);"
-#define INSERT_KEYWORD_QUERY @"INSERT INTO `%@` (idf, type, updatetime, content, userinfo) VALUES (\"%@\", %d, %ld, \"%@\", \"%@\");"
-#define UPDATE_KEYWORD_QUERY @"UPDATE `%@` SET content=\"%@\", userinfo=\"\%@\" WHERE idf=\"%@\" AND type=%d;"
+#define CREATE_KEYWORD_TABLE_0_1 @"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT, tag VARCHAR);"
 #define CHECK_VALUE_ISEXIST @"SELECT `rowid`, `idf`, `type` FROM `%@` WHERE idf=\"%s\" AND type=%d;"
 #define DELETE_TABLE @"DELETE FROM `%@`"
 
@@ -189,20 +186,30 @@ extern "C" {
 
 - (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
 {
-    [self searchValueWithKeywords:keywords until:time customType:NSUIntegerMax orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
+    [self searchValueWithKeywords:keywords until:time customType:NSUIntegerMax tag:nil orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
 }
 
 - (void)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
 {
     NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
     if ([keywords count] > 0) {
-        [self searchValueWithKeywords:keywords until:time customType:NSUIntegerMax orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
+        [self searchValueWithKeywords:keywords until:time customType:NSUIntegerMax tag:nil orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
     } else {
         handler(nil);
     }
 }
 
-- (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler;
+- (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
+{
+    NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
+    if ([keywords count] > 0) {
+        [self searchValueWithKeywords:keywords until:time customType:customType tag:tag orderBy:orderType resultHandler:handler];
+    } else {
+        handler(nil);
+    }
+}
+
+- (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
 {
     NSArray *filterKeywords = [self _filterKeywords:keywords];
     NSMutableString *nsSql = [[NSMutableString alloc] init];
@@ -214,6 +221,9 @@ extern "C" {
         if (customType != NSUIntegerMax) {
             [nsSql appendFormat:@" AND type=%zd ", customType];
         }
+        if (tag != nil) {
+            [nsSql appendFormat:@" AND tag=%@ ", tag];
+        }
         if (orderType != LEFTSearchOrderTypeNone) {
             [nsSql appendFormat:@" ORDER BY updatetime %@", orderType == LEFTSearchOrderTypeAsc ? @"ASC" : @"DESC"];
         }
@@ -221,16 +231,6 @@ extern "C" {
     NSDictionary *extraParams = @{@"sql" : nsSql,
                                   @"handler" : handler};
     [self performSelector:@selector(_performFetchSQL:) onThread:self.fetchThread withObject:extraParams waitUntilDone:NO];
-}
-
-- (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
-{
-    NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
-    if ([keywords count] > 0) {
-        [self searchValueWithKeywords:keywords until:time customType:customType orderBy:orderType resultHandler:handler];
-    } else {
-        handler(nil);
-    }
 }
 
 - (void)_performFetchSQL:(NSDictionary *)params
@@ -407,12 +407,14 @@ extern "C" {
     NSString *nsSql = [NSString stringWithFormat:CREATE_KEYWORD_TABLE_0_1, keyword];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
-    nsSql = [NSString stringWithFormat:INSERT_KEYWORD_QUERY, keyword,
+    nsSql = [NSString stringWithFormat:@"INSERT INTO `%@` (idf, type, updatetime, content, userinfo, tag) VALUES (\"%@\", %d, %ld, \"%@\", \"%@\", \"%@\")",
+             keyword,
              value.identifier,
              value.type,
              (long)value.updateTime,
              value.content,
-             value.userInfoString];
+             value.userInfoString,
+             value.tag ? : @"null"];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
 //    int changed = sqlite3_changes(_write_db);
@@ -422,9 +424,11 @@ extern "C" {
 - (void)_updateValue:(LEFTValue *)value keyword:(NSString *)keyword
 {
     char *sql, *err_str;
-    NSString *nsSql = [NSString stringWithFormat:UPDATE_KEYWORD_QUERY, keyword,
+    NSString *nsSql = [NSString stringWithFormat:@"UPDATE `%@` SET content=\"%@\", userinfo=\"%@\", tag=\"%@\" WHERE idf=\"%@\" AND type=%d",
+                       keyword,
                        value.content,
                        value.userInfoString,
+                       value.tag ? : @"null",
                        value.identifier,
                        value.type];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
@@ -487,7 +491,7 @@ extern "C" {
 @implementation LEFTSearchResult
 {
     sqlite3_stmt *_stmt;
-    std::map<char *, int> _name_index;
+    std::map<std::string, int> _name_index;
 }
 
 - (void)dealloc
@@ -515,26 +519,20 @@ extern "C" {
     int res = sqlite3_step(_stmt);
     if (res == SQLITE_ROW) {
         LEFTValue *value = [[LEFTValue alloc] init];
-        char *key_name;
         char *tmp_str_value;
         // idf
-        key_name = (char *)"idf";
-        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index[key_name]);
+        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index["idf"]);
         value.identifier = [NSString stringWithUTF8String:tmp_str_value];
         //"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT);"
         // type
-        key_name = (char *)"type";
-        value.type = sqlite3_column_int(_stmt, _name_index[key_name]);
+        value.type = sqlite3_column_int(_stmt, _name_index["type"]);
         // updatetime
-        key_name = (char *)"updatetime";
-        value.updateTime = sqlite3_column_int64(_stmt, _name_index[key_name]);
+        value.updateTime = sqlite3_column_int64(_stmt, _name_index["updatetime"]);
         // content
-        key_name = (char *)"content";
-        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index[key_name]);
+        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index["content"]);
         value.content = [NSString stringWithUTF8String:tmp_str_value];
         // userinfo
-        key_name = (char *)"userinfo";
-        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index[key_name]);
+        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index["userinfo"]);
         id obj = [NSJSONSerialization JSONObjectWithData:[NSData dataWithBytes:tmp_str_value length:strlen(tmp_str_value)] options:0 error:nil];
         value.userInfo = obj;
         
