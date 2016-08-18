@@ -11,6 +11,61 @@
 #import "LEFTSQLDataImporter.h"
 #import <Foundation/Foundation.h>
 
+@interface NSMutableString (XMLEscape)
+
+- (NSMutableString *)xmlSimpleUnescape;
+- (NSMutableString *)xmlSimpleEscape;
+
+@end
+
+@implementation NSMutableString (XMLEscape)
+
+- (NSMutableString *)xmlSimpleUnescape
+{
+    [self replaceOccurrencesOfString:@"&amp;"  withString:@"&"  options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"&quot;" withString:@"\"" options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"&#x27;" withString:@"'"  options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"&#39;"  withString:@"'"  options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"&#x92;" withString:@"'"  options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"&#x96;" withString:@"-"  options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"&gt;"   withString:@">"  options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"&lt;"   withString:@"<"  options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    
+    return self;
+}
+
+- (NSMutableString *)xmlSimpleEscape
+{
+    [self replaceOccurrencesOfString:@"&"  withString:@"&amp;"  options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"\"" withString:@"&quot;" options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"'"  withString:@"&#x27;" options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@">"  withString:@"&gt;"   options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [self replaceOccurrencesOfString:@"<"  withString:@"&lt;"   options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    
+    return self;
+}
+
+@end
+
+@implementation NSString (XMLEscapge)
+
+- (NSString *)xmlSimpleUnescapeString
+{
+    NSMutableString *unescapeStr = [NSMutableString stringWithString:self];
+    
+    return [unescapeStr xmlSimpleUnescape];
+}
+
+
+- (NSString *)xmlSimpleEscapeString
+{
+    NSMutableString *escapeStr = [NSMutableString stringWithString:self];
+    
+    return [escapeStr xmlSimpleEscape];
+}
+
+@end
+
 @interface LEFullTextEngineTests : XCTestCase
 
 @property (nonatomic, strong) LEFullTextEngine *fulltextEngine;
@@ -40,8 +95,10 @@
             value.identifier = [NSString stringWithFormat:@"msg_%ld", [set longForColumn:@"guuid"]];
             value.type = 1;
             value.updateTime = [set longForColumn:@"dtime"];
-            value.content = [set stringForColumn:@"content"];
+            NSString *content = [set stringForColumn:@"content"];
+            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
             value.tag = [set stringForColumn:@"uid"];
+            value.userInfo = @{@"remoteUser": value.tag};
             
             [weakImport.engine importValuesSync:@[value]];
             i++;
@@ -62,8 +119,10 @@
             value.identifier = [NSString stringWithFormat:@"sys_%ld", [set longForColumn:@"guuid"]];
             value.type = 2;
             value.updateTime = [set longForColumn:@"dtime"];
-            value.content = [set stringForColumn:@"contentex"];
+            NSString *content = [set stringForColumn:@"contentex"];
+            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
             value.tag = [set stringForColumn:@"uid"];
+            value.userInfo = @{@"remoteUser": value.tag};
             
             [weakImport.engine importValuesSync:@[value]];
             i++;
@@ -84,8 +143,10 @@
             value.identifier = [NSString stringWithFormat:@"tm_%ld", [set longForColumn:@"guuid"]];
             value.type = 3;
             value.updateTime = [set longForColumn:@"dtime"];
-            value.content = [set stringForColumn:@"content"];
+            NSString *content = [set stringForColumn:@"content"];
+            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
             value.tag = [set stringForColumn:@"roomid"];
+            value.userInfo = @{@"roomId": value.tag};
             
             [weakImport.engine importValuesSync:@[value]];
             i++;
@@ -114,16 +175,16 @@
 - (void)testImport {
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
-    [self.fulltextEngine startImporter:self.imImporter];
-    [self.fulltextEngine startImporter:self.sysImporter];
-    [self.fulltextEngine startImporter:self.tmImporter];
-    
-    while ([self.imImporter status] != LEFTDataImporterStatusFinished ||
-           [self.sysImporter status] != LEFTDataImporterStatusFinished ||
-           [self.tmImporter status] != LEFTDataImporterStatusFinished) {
-        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-        [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
-    }
+//    [self.fulltextEngine startImporter:self.imImporter];
+//    [self.fulltextEngine startImporter:self.sysImporter];
+//    [self.fulltextEngine startImporter:self.tmImporter];
+//    
+//    while ([self.imImporter status] != LEFTDataImporterStatusFinished ||
+//           [self.sysImporter status] != LEFTDataImporterStatusFinished ||
+//           [self.tmImporter status] != LEFTDataImporterStatusFinished) {
+//        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+//        [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
+//    }
 }
 
 - (void)testSearch
