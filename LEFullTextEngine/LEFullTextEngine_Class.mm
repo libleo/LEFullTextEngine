@@ -123,6 +123,7 @@ extern "C" {
     self.dataImporters = [NSMutableArray array];
     self.importQueue = [[NSOperationQueue alloc] init];
     
+    self.importerPriority = NSOperationQueuePriorityNormal;
     self.importQueue.maxConcurrentOperationCount = 3;
     [self.importQueue setSuspended:NO];
     
@@ -318,6 +319,7 @@ extern "C" {
         } else {
             printf("sql begin error <%s>\n", err_str);
         }
+        sqlite3_free(err_str);
         return YES;
     }
 }
@@ -342,6 +344,16 @@ extern "C" {
     return NO;
 }
 
+- (void)setConcurrentImporterCount:(NSUInteger)count
+{
+    self.importQueue.maxConcurrentOperationCount = count;
+}
+
+- (NSUInteger)concurrentImporterCount
+{
+    return self.importQueue.maxConcurrentOperationCount;
+}
+
 - (void)startImporter:(id<LEFTDataImporter>)importer
 {
     [self.dataImporters addObject:importer];
@@ -350,7 +362,7 @@ extern "C" {
     NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
         [importer start];
     }];
-    operation.queuePriority = NSOperationQueuePriorityNormal;
+    operation.queuePriority = self.importerPriority;
     [self.importQueue addOperation:operation];
 }
 
@@ -435,6 +447,7 @@ extern "C" {
         printf("sql is <%s>\n", sql);
         printf("error str <%s>", err_str);
     }
+    sqlite3_free(err_str);
     sqlite3_free(sql);
 }
 
@@ -456,6 +469,7 @@ extern "C" {
         printf("sql is <%s>\n", sql);
         printf("error str <%s>", err_str);
     }
+    sqlite3_free(err_str);
     sqlite3_free(sql);
 }
 
@@ -464,9 +478,11 @@ extern "C" {
     char *sql, *err_str;
     NSString *nsSql = [NSString stringWithFormat:DELETE_TABLE, tableName];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
-    sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
-//    int changed = sqlite3_changes(_write_db);
-//    printf("%d changed\n", changed);
+    int res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+    if (res != SQLITE_OK) {
+        printf("delete table %s error <%s>", [tableName cStringUsingEncoding:NSUTF8StringEncoding], err_str);
+    }
+    sqlite3_free(err_str);
 }
 
 - (void)_fetchThreadMain

@@ -55,6 +55,12 @@ typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
 - (BOOL)truncate;
 
 // 批量装入数据
+
+@property (nonatomic, assign) NSOperationQueuePriority importerPriority;
+
+- (void)setConcurrentImporterCount:(NSUInteger)count;
+- (NSUInteger)concurrentImporterCount;
+
 - (void)startImporter:(id<LEFTDataImporter>)importer;
 - (void)pauseImporter:(id<LEFTDataImporter>)importer;
 - (void)resumeImporter:(id<LEFTDataImporter>)importer;
