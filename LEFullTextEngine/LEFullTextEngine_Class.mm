@@ -15,10 +15,9 @@
 #include <sqlite3.h>
 
 #define DB_SUFFIX @"idxdb"
-#define CURRENT_MAIN_DB_VER @"0.1"
+#define CURRENT_MAIN_DB_VER @"0.2"
 
-#define CREATE_KEYWORD_TABLE_0_1 @"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT, tag VARCHAR);"
-#define CHECK_VALUE_ISEXIST @"SELECT `rowid`, `idf`, `type` FROM `%@` WHERE idf=\"%s\" AND type=%d;"
+#define CREATE_KEYWORD_TABLE_0_1 @"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT, tag VARCHAR, UNIQUE (idf, type));"
 #define DELETE_TABLE @"DELETE FROM `%@`"
 
 // 模式切换
@@ -304,12 +303,7 @@ extern "C" {
                     value.keywords = [[self partcipleWrapper] minimumParticpleContent:value.content];
                 }
                 for (NSString *keyword in [value keywords]) {
-                    unsigned long long row = [self _checkValueExist:value keyword:keyword];
-                    if (row > 0) {
-                        [self _updateValue:value keyword:keyword];
-                    } else {
-                        [self _insertValue:value keyword:keyword];
-                    }
+                    [self _insertOrReplaceValue:value keyword:keyword];
                 }
             }
             res = sqlite3_exec(_write_db, "COMMIT;", 0, 0, &err_str);
@@ -409,7 +403,7 @@ extern "C" {
 - (unsigned long long)_checkValueExist:(LEFTValue *)value keyword:(NSString *)keyword
 {
     char *sql;
-    NSString *nsSql = [NSString stringWithFormat:CHECK_VALUE_ISEXIST, keyword, [value.identifier cStringUsingEncoding:NSUTF8StringEncoding], value.type];
+    NSString *nsSql = [NSString stringWithFormat:@"SELECT `rowid`, `idf`, `type` FROM `%@` WHERE idf=\"%s\" AND type=%d LIMIT 1", keyword, [value.identifier cStringUsingEncoding:NSUTF8StringEncoding], value.type];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_stmt *stmt;
     sqlite3_prepare(_write_db, sql, (int)strlen(sql), &stmt, NULL);
@@ -423,6 +417,32 @@ extern "C" {
     }
     sqlite3_finalize(stmt);
     return row_id;
+}
+
+- (void)_insertOrReplaceValue:(LEFTValue *)value keyword:(NSString *)keyword
+{
+    char *sql, *err_str;
+    NSString *nsSql = [NSString stringWithFormat:CREATE_KEYWORD_TABLE_0_1, keyword];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+    
+    sql = sqlite3_mprintf("REPLACE INTO `%s` (idf, type, updatetime, content, userinfo, tag) VALUES (\"%q\", %d, %ld, \"%q\", '%q', \"%q\")",
+                          [keyword cStringUsingEncoding:NSUTF8StringEncoding],
+                          [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
+                          value.type,
+                          (long)value.updateTime,
+                          [value.content cStringUsingEncoding:NSUTF8StringEncoding],
+                          [value.userInfoString cStringUsingEncoding:NSUTF8StringEncoding],
+                          value.tag ? [value.tag cStringUsingEncoding:NSUTF8StringEncoding] : "null");
+    int res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+    int changed = sqlite3_changes(_write_db);
+    if (changed == 0) {
+        printf("insert changed failed <%d>\n", res);
+        printf("sql is <%s>\n", sql);
+        printf("error str <%s>", err_str);
+    }
+    sqlite3_free(err_str);
+    sqlite3_free(sql);
 }
 
 - (void)_insertValue:(LEFTValue *)value keyword:(NSString *)keyword
