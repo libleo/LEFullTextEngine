@@ -17,7 +17,8 @@
 #define DB_SUFFIX @"idxdb"
 #define CURRENT_MAIN_DB_VER @"0.2"
 
-#define CREATE_KEYWORD_TABLE_0_1 @"CREATE TABLE IF NOT EXISTS `%@` (idf TEXT NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, content TEXT, userinfo TEXT, tag VARCHAR, UNIQUE (idf, type));"
+#define CREATE_KEYWORD_TABLE_0_2 @"CREATE TABLE IF NOT EXISTS `%@` (idf VARCHAR(128) NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, tag VARCHAR, UNIQUE (idf, type));"
+#define CREATE_CONTENT_TABLE_0_2 @"CREATE TABLE IF NOT EXISTS `_content_cache` (idf VARCHAR(128) NOT NULL, type INTEGER NOT NULL, content TEXT, userinfo TEXT);"
 #define DELETE_TABLE @"DELETE FROM `%@`"
 
 // 模式切换
@@ -126,6 +127,8 @@ extern "C" {
     self.importQueue.maxConcurrentOperationCount = 3;
     [self.importQueue setSuspended:NO];
     
+    self.indexMode = LEFTIndexModePure;
+    
     int safe = sqlite3_threadsafe();
     NSLog(@"thread safe %d", safe);
     const char *db_path = [[self _dbNameWithName:@"main"] cStringUsingEncoding:NSUTF8StringEncoding];
@@ -212,12 +215,16 @@ extern "C" {
 - (void)searchValueWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
 {
     NSArray *filterKeywords = [self _filterKeywords:keywords];
+    LEFTIndexMode indexMode = self.indexMode;
     NSMutableString *nsSql = [[NSMutableString alloc] init];
     [filterKeywords enumerateObjectsUsingBlock:^(NSString *keyword, NSUInteger idx, BOOL * _Nonnull stop) {
         if (idx > 0) {
             [nsSql appendString:@" INTERSECT "];
         }
         [nsSql appendFormat:@"SELECT * FROM `%@` WHERE updatetime>=%.0lf", keyword, time];
+        if (indexMode) {
+            [nsSql appendFormat:@" JOIN `_content_cache` ON `%@`.idf = `_content_cache`.idf AND `%@`.type = `_content_cache`.type ", keyword, keyword];
+        }
         if (customType != NSUIntegerMax) {
             [nsSql appendFormat:@" AND type=%zd ", customType];
         }
@@ -305,8 +312,11 @@ extern "C" {
                 for (NSString *keyword in [value keywords]) {
                     [self _insertOrReplaceValue:value keyword:keyword];
                 }
+                if (self.indexMode == LEFTIndexModeCacheContent) {
+                    [self _importValueContent:value];
+                }
             }
-            res = sqlite3_exec(_write_db, "COMMIT;", 0, 0, &err_str);
+            res &= sqlite3_exec(_write_db, "COMMIT;", 0, 0, &err_str);
             if (res != SQLITE_OK) {
                 printf("fail commit error <%s>\n", err_str);
             }
@@ -316,6 +326,30 @@ extern "C" {
         sqlite3_free(err_str);
         return YES;
     }
+}
+
+- (BOOL)_importValueContent:(LEFTValue *)value
+{
+    char *sql, *err_str;
+    NSString *nsSql = [NSString stringWithFormat:CREATE_CONTENT_TABLE_0_2];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+    
+    sql = sqlite3_mprintf("REPLACE INTO `_content_cache` (idf, type, content, userinfo) VALUES (\"%q\", %d, \"%q\", '%q')",
+                          [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
+                          value.type,
+                          value.content,
+                          [value.userInfoString cStringUsingEncoding:NSUTF8StringEncoding]);
+    int res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+    int changed = sqlite3_changes(_write_db);
+    if (changed == 0) {
+        printf("insert content cache failed <%d>\n", res);
+        printf("sql is <%s>\n", sql);
+        printf("error str <%s>", err_str);
+    }
+    sqlite3_free(err_str);
+    sqlite3_free(sql);
+    return res == SQLITE_OK;
 }
 
 - (BOOL)deleteValuesWithKeyword:(NSString *)keyword
@@ -422,17 +456,15 @@ extern "C" {
 - (void)_insertOrReplaceValue:(LEFTValue *)value keyword:(NSString *)keyword
 {
     char *sql, *err_str;
-    NSString *nsSql = [NSString stringWithFormat:CREATE_KEYWORD_TABLE_0_1, keyword];
+    NSString *nsSql = [NSString stringWithFormat:CREATE_KEYWORD_TABLE_0_2, keyword];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
     
-    sql = sqlite3_mprintf("REPLACE INTO `%s` (idf, type, updatetime, content, userinfo, tag) VALUES (\"%q\", %d, %ld, \"%q\", '%q', \"%q\")",
+    sql = sqlite3_mprintf("REPLACE INTO `%s` (idf, type, updatetime, tag) VALUES (\"%q\", %d, %ld, \"%q\")",
                           [keyword cStringUsingEncoding:NSUTF8StringEncoding],
                           [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
                           value.type,
                           (long)value.updateTime,
-                          [value.content cStringUsingEncoding:NSUTF8StringEncoding],
-                          [value.userInfoString cStringUsingEncoding:NSUTF8StringEncoding],
                           value.tag ? [value.tag cStringUsingEncoding:NSUTF8StringEncoding] : "null");
     int res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
     int changed = sqlite3_changes(_write_db);
@@ -448,17 +480,15 @@ extern "C" {
 - (void)_insertValue:(LEFTValue *)value keyword:(NSString *)keyword
 {
     char *sql, *err_str;
-    NSString *nsSql = [NSString stringWithFormat:CREATE_KEYWORD_TABLE_0_1, keyword];
+    NSString *nsSql = [NSString stringWithFormat:CREATE_KEYWORD_TABLE_0_2, keyword];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
 
-    sql = sqlite3_mprintf("INSERT INTO `%s` (idf, type, updatetime, content, userinfo, tag) VALUES (\"%q\", %d, %ld, \"%q\", '%q', \"%q\")",
+    sql = sqlite3_mprintf("INSERT INTO `%s` (idf, type, updatetime, tag) VALUES (\"%q\", %d, %ld, \"%q\", '%q', \"%q\")",
                           [keyword cStringUsingEncoding:NSUTF8StringEncoding],
                           [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
                           value.type,
                           (long)value.updateTime,
-                          [value.content cStringUsingEncoding:NSUTF8StringEncoding],
-                          [value.userInfoString cStringUsingEncoding:NSUTF8StringEncoding],
                           value.tag ? [value.tag cStringUsingEncoding:NSUTF8StringEncoding] : "null");
     int res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
     int changed = sqlite3_changes(_write_db);
@@ -474,10 +504,8 @@ extern "C" {
 - (void)_updateValue:(LEFTValue *)value keyword:(NSString *)keyword
 {
     char *sql, *err_str;
-    sql = sqlite3_mprintf("UPDATE `%s` SET content=\"%q\", userinfo='%q', tag=\"%q\" WHERE idf=\"%q\" AND type=%d",
+    sql = sqlite3_mprintf("UPDATE `%s` SET tag=\"%q\" WHERE idf=\"%q\" AND type=%d",
                           [keyword cStringUsingEncoding:NSUTF8StringEncoding],
-                          [value.content cStringUsingEncoding:NSUTF8StringEncoding],
-                          [value.userInfoString cStringUsingEncoding:NSUTF8StringEncoding],
                           value.tag ? [value.tag cStringUsingEncoding:NSUTF8StringEncoding] : "null",
                           [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
                           value.type);
@@ -586,13 +614,13 @@ extern "C" {
         value.type = sqlite3_column_int(_stmt, _name_index["type"]);
         // updatetime
         value.updateTime = sqlite3_column_int64(_stmt, _name_index["updatetime"]);
-        // content
-        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index["content"]);
-        value.content = [NSString stringWithUTF8String:tmp_str_value];
-        // userinfo
-        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index["userinfo"]);
-        id obj = [NSJSONSerialization JSONObjectWithData:[NSData dataWithBytes:tmp_str_value length:strlen(tmp_str_value)] options:0 error:nil];
-        value.userInfo = obj;
+//        // content
+//        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index["content"]);
+//        value.content = [NSString stringWithUTF8String:tmp_str_value];
+//        // userinfo
+//        tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index["userinfo"]);
+//        id obj = [NSJSONSerialization JSONObjectWithData:[NSData dataWithBytes:tmp_str_value length:strlen(tmp_str_value)] options:0 error:nil];
+//        value.userInfo = obj;
         // tag
         tmp_str_value = (char *)sqlite3_column_text(_stmt, _name_index["tag"]);
         value.tag = [NSString stringWithUTF8String:tmp_str_value];

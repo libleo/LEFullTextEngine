@@ -21,6 +21,11 @@ typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
     LEFTSearchOrderTypeDesc
 };
 
+typedef NS_ENUM(NSUInteger, LEFTIndexMode) {
+    LEFTIndexModePure = 0x01,
+    LEFTIndexModeCacheContent = 0x02,
+};
+
 @interface LEFTSearchResult : NSObject
 
 - (LEFTValue *)next;
@@ -34,6 +39,8 @@ typedef NS_ENUM(NSUInteger, LEFTSearchOrderType) {
 
 @property (nonatomic, readonly) NSString *rootDirectory;
 @property (nonatomic, readonly) LEFTPartcipleWrapper *partcipleWrapper;
+
+@property (nonatomic, assign) LEFTIndexMode indexMode;
 
 - (instancetype)initWithRootDirectory:(NSString *)rootDirectory;
 
