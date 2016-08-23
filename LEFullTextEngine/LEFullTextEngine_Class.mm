@@ -222,7 +222,7 @@ extern "C" {
             [nsSql appendString:@" INTERSECT "];
         }
         [nsSql appendFormat:@"SELECT * FROM `%@` WHERE updatetime>=%.0lf", keyword, time];
-        if (indexMode) {
+        if (indexMode == LEFTIndexModeCacheContent) {
             [nsSql appendFormat:@" JOIN `_content_cache` ON `%@`.idf = `_content_cache`.idf AND `%@`.type = `_content_cache`.type ", keyword, keyword];
         }
         if (customType != NSUIntegerMax) {
