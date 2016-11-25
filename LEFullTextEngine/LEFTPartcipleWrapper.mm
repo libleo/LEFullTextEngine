@@ -120,7 +120,7 @@ using namespace std;
 
 - (NSArray *)minimumParticpleContent:(NSString *)content
 {
-    if (content == nil) {
+    if (content == nil || [content length] == 0) {
         return @[];
     }
     string cStr = [content cStringUsingEncoding:NSUTF8StringEncoding];
@@ -131,11 +131,13 @@ using namespace std;
     NSMutableArray *wordsArray = [NSMutableArray arrayWithCapacity:words.size()];
     for (auto word = words.cbegin(); word != words.cend(); word++) {
         tmpStr = [NSString stringWithUTF8String:word->c_str()];
-        unichar ch = [tmpStr characterAtIndex:0];
-        if ((ch >= 0x4E00 && ch <= 0x9FD5) || // unicode 汉字范围
-            (ch >= 0x3041 && ch <= 0x30FF) //　unicode 日语假名
-            ) {
-            [wordsArray addObject:tmpStr];
+        if ([tmpStr length] > 0) {
+            unichar ch = [tmpStr characterAtIndex:0];
+            if ((ch >= 0x4E00 && ch <= 0x9FD5) || // unicode 汉字范围
+                (ch >= 0x3041 && ch <= 0x30FF) //　unicode 日语假名
+                ) {
+                [wordsArray addObject:tmpStr];
+            }
         }
 //        [wordsArray addObject:tmpStr];
 //        if (isChn(tmp) == 1) {
