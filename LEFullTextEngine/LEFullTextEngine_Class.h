@@ -38,6 +38,7 @@ typedef NS_ENUM(NSUInteger, LEFTIndexMode) {
 @interface LEFullTextEngine : NSObject
 
 @property (nonatomic, readonly) NSString *rootDirectory;
+@property (nonatomic, readonly) NSString *dbPath;
 @property (nonatomic, readonly) LEFTPartcipleWrapper *partcipleWrapper;
 
 @property (nonatomic, assign) LEFTIndexMode indexMode;
@@ -59,6 +60,7 @@ typedef NS_ENUM(NSUInteger, LEFTIndexMode) {
 - (BOOL)importValuesSync:(NSArray *)values;
 // 清理数据库(delete)
 - (BOOL)deleteValuesWithKeyword:(NSString *)keyword;
+- (BOOL)deleteWithValue:(LEFTValue *)value;
 - (BOOL)truncate;
 
 // 批量装入数据

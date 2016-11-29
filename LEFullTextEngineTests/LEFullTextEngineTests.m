@@ -206,4 +206,13 @@
     }
 }
 
+- (void)testDelete
+{
+    LEFTValue *value = [[LEFTValue alloc] init];
+    value.keywords = @[@"一个"];
+    value.identifier = @"tm_6052932614138918611";
+    value.type = 3;
+    [self.fulltextEngine deleteWithValue:value];
+}
+
 @end

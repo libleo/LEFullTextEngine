@@ -57,7 +57,7 @@ extern "C" {
 }
 
 @property (nonatomic, copy) NSString *rootDirectory;
-
+@property (nonatomic, copy) NSString *dbPath;
 @property (nonatomic, strong) LEFTPartcipleWrapper *partcipleWrapper;
 @property (nonatomic, strong) NSMutableArray *dataImporters;
 @property (nonatomic, strong) NSOperationQueue *importQueue;
@@ -131,7 +131,8 @@ extern "C" {
     
     int safe = sqlite3_threadsafe();
     NSLog(@"thread safe %d", safe);
-    const char *db_path = [[self _dbNameWithName:@"main"] cStringUsingEncoding:NSUTF8StringEncoding];
+    self.dbPath = [self _dbNameWithName:@"main"];
+    const char *db_path = [self.dbPath cStringUsingEncoding:NSUTF8StringEncoding];
     res = sqlite3_open(db_path, &_write_db);
     if (res != 0) {
         NSLog(@"open write db failed <%s>", strerror(errno));
@@ -364,12 +365,51 @@ extern "C" {
         });
 #endif
     }
-    return NO;
+    return YES;
+}
+
+- (BOOL)deleteWithValue:(LEFTValue *)value
+{
+    @autoreleasepool {
+#ifdef RUNLOOP_M
+        [self performSelector:@selector(_deleteValue:) onThread:self.importThread withObject:value waitUntilDone:NO modes:@[NSRunLoopCommonModes]];
+#elif defined GCD_M
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(_import_queue, ^{
+            [weakSelf _deleteValue:value];
+        });
+#endif
+    }
+    return YES;
 }
 
 - (BOOL)truncate
 {
-    return NO;
+    const char *db_path = [self.dbPath cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_close(_write_db);
+    sqlite3_close(_read_db);
+    sqlite3_close(_main_thread_db);
+    NSError *error;
+    [[NSFileManager defaultManager] removeItemAtPath:self.dbPath error:&error];
+    if (error) {
+        NSLog(@"truncate db error ... <%@>", [error localizedDescription]);
+    }
+    int res = sqlite3_open(db_path, &_write_db);
+    if (res != 0) {
+        NSLog(@"open write db failed <%s>", strerror(errno));
+        return NO;
+    }
+    res = sqlite3_open(db_path, &_read_db);
+    if (res != 0) {
+        NSLog(@"open read db failed <%s>", strerror(errno));
+        return NO;
+    }
+    res = sqlite3_open(db_path, &_main_thread_db);
+    if (res != 0) {
+        NSLog(@"open main_thread db failed <%s>", strerror(errno));
+        return NO;
+    }
+    return YES;
 }
 
 - (void)setConcurrentImporterCount:(NSUInteger)count
@@ -531,6 +571,29 @@ extern "C" {
         printf("delete table %s error <%s>", [tableName cStringUsingEncoding:NSUTF8StringEncoding], err_str);
     }
     sqlite3_free(err_str);
+}
+
+- (void)_deleteValue:(LEFTValue *)value
+{
+    char *sql, *err_str;
+    int res = sqlite3_exec(_write_db, "BEGIN;", 0, 0, &err_str);
+    for (NSString *keyword in [value keywords]) {
+        const char *key = [keyword cStringUsingEncoding:NSUTF8StringEncoding];
+        sql = sqlite3_mprintf("DELETE FROM `%s` WHERE idf=\"%q\" AND type=%d",
+                              key,
+                              [value.identifier cStringUsingEncoding:NSUTF8StringEncoding],
+                              value.type);
+        res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+        int changed = sqlite3_changes(_write_db);
+        if (changed == 0) {
+            printf("delete from %s failed <%d>\n", key, res);
+            printf("sql is <%s>\n", sql);
+            printf("error str <%s>\n", err_str);
+        }
+        sqlite3_free(err_str);
+        sqlite3_free(sql);
+    }
+    res &= sqlite3_exec(_write_db, "COMMIT;", 0, 0, &err_str);
 }
 
 - (void)_fetchThreadMain
