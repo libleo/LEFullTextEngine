@@ -241,6 +241,47 @@ extern "C" {
     [self performSelector:@selector(_performFetchSQL:) onThread:self.fetchThread withObject:extraParams waitUntilDone:NO];
 }
 
+- (LEFTSearchResult *)searchValueSyncWithSentence:(NSString *)sentence until:(NSTimeInterval)time customType:(NSUInteger)customType tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType;
+{
+    NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
+    return [self searchValueSyncWithKeywords:keywords until:time customType:customType tag:tag orderBy:orderType];
+}
+
+- (LEFTSearchResult *)searchValueSyncWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType
+{
+    NSArray *filterKeywords = [self _filterKeywords:keywords];
+    LEFTIndexMode indexMode = self.indexMode;
+    NSMutableString *nsSql = [[NSMutableString alloc] init];
+    [filterKeywords enumerateObjectsUsingBlock:^(NSString *keyword, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (idx > 0) {
+            [nsSql appendString:@" INTERSECT "];
+        }
+        [nsSql appendFormat:@"SELECT * FROM `%@` WHERE updatetime>=%.0lf", keyword, time];
+        if (indexMode == LEFTIndexModeCacheContent) {
+            [nsSql appendFormat:@" JOIN `_content_cache` ON `%@`.idf = `_content_cache`.idf AND `%@`.type = `_content_cache`.type ", keyword, keyword];
+        }
+        if (customType != NSUIntegerMax) {
+            [nsSql appendFormat:@" AND type=%zd ", customType];
+        }
+        if (tag != nil) {
+            [nsSql appendFormat:@" AND tag=%@ ", tag];
+        }
+        if (orderType != LEFTSearchOrderTypeNone) {
+            [nsSql appendFormat:@" ORDER BY updatetime %@", orderType == LEFTSearchOrderTypeAsc ? @"ASC" : @"DESC"];
+        }
+    }];
+    
+    char *sql;
+    clock_t start = clock();
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_stmt *stmt;
+    sqlite3_prepare(_main_thread_db, sql, (int)strlen(sql), &stmt, NULL);
+    LEFTSearchResult *result = [[LEFTSearchResult alloc] initWithStmt:stmt];
+    result.usedClock = clock() - start;
+    
+    return result;
+}
+
 - (void)_performFetchSQL:(NSDictionary *)params
 {
     @autoreleasepool {

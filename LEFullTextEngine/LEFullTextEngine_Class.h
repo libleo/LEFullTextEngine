@@ -28,6 +28,8 @@ typedef NS_ENUM(NSUInteger, LEFTIndexMode) {
 
 @interface LEFTSearchResult : NSObject
 
+@property (nonatomic, assign) clock_t usedClock;
+
 - (LEFTValue *)next;
 
 @end
@@ -62,6 +64,10 @@ typedef NS_ENUM(NSUInteger, LEFTIndexMode) {
 - (BOOL)deleteValuesWithKeyword:(NSString *)keyword;
 - (BOOL)deleteWithValue:(LEFTValue *)value;
 - (BOOL)truncate;
+
+// 同步测试接口
+- (LEFTSearchResult *)searchValueSyncWithSentence:(NSString *)sentence until:(NSTimeInterval)time customType:(NSUInteger)customType tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType;
+- (LEFTSearchResult *)searchValueSyncWithKeywords:(NSArray *)keywords until:(NSTimeInterval)time customType:(NSUInteger)customType tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType;
 
 // 批量装入数据
 
