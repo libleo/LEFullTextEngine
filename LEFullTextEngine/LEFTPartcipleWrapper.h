@@ -13,9 +13,13 @@
 + (instancetype)shareInstance;
 
 // 最小化分词(颗粒度细)
-- (NSArray *)minimumParticpleContent:(NSString *)content;
+- (NSArray *)minimumParticipleContent:(NSString *)content;
+// 最小化分词，不删减英语
+- (NSArray *)minimumTestParticipleContent:(NSString *)content;
 // 简单分词
-- (NSArray *)particpleContent:(NSString *)content;
+- (NSArray *)participleContent:(NSString *)content;
+// 兼容英语中文的分词
+- (NSArray *)participleKeywordsContent:(NSString *)content;
 // 取出有意义的关键字
 - (NSArray *)extractKeywordsWithContent:(NSString *)content;
 

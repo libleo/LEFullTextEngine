@@ -118,7 +118,7 @@ using namespace std;
                                                                    [self.stopWordPath cStringUsingEncoding:NSUTF8StringEncoding]));
 }
 
-- (NSArray *)minimumParticpleContent:(NSString *)content
+- (NSArray *)minimumParticipleContent:(NSString *)content
 {
     if (content == nil || [content length] == 0) {
         return @[];
@@ -146,6 +146,26 @@ using namespace std;
     return wordsArray;
 }
 
+- (NSArray *)minimumTestParticipleContent:(NSString *)content
+{
+    if (content == nil || [content length] == 0) {
+        return @[];
+    }
+    string cStr = [content cStringUsingEncoding:NSUTF8StringEncoding];
+    vector<string> words;
+    m_spJiebaParticple->CutSmall(cStr, words, 2);
+    
+    NSString *tmpStr = nil;
+    NSMutableArray *wordsArray = [NSMutableArray arrayWithCapacity:words.size()];
+    for (auto word = words.cbegin(); word != words.cend(); word++) {
+        tmpStr = [NSString stringWithUTF8String:word->c_str()];
+        if ([tmpStr length] > 0) {
+            [wordsArray addObject:tmpStr];
+        }
+    }
+    return wordsArray;
+}
+
 - (NSArray *)particpleContent:(NSString *)content
 {
     if (content == nil) {
@@ -154,6 +174,24 @@ using namespace std;
     string cStr = [content cStringUsingEncoding:NSUTF8StringEncoding];
     vector<string> words;
     m_spJiebaParticple->Cut(cStr, words, true);
+    
+    NSString *tmpStr = nil;
+    NSMutableArray *wordsArray = [NSMutableArray arrayWithCapacity:words.size()];
+    for (auto word = words.cbegin(); word != words.cend(); word++) {
+        tmpStr = [NSString stringWithUTF8String:word->c_str()];
+        [wordsArray addObject:tmpStr];
+    }
+    return wordsArray;
+}
+
+- (NSArray *)participleKeywordsContent:(NSString *)content
+{
+    if (content == nil) {
+        return @[];
+    }
+    string cStr = [content cStringUsingEncoding:NSUTF8StringEncoding];
+    vector<string> words;
+    m_spJiebaParticple->CutForSearch(cStr, words);
     
     NSString *tmpStr = nil;
     NSMutableArray *wordsArray = [NSMutableArray arrayWithCapacity:words.size()];

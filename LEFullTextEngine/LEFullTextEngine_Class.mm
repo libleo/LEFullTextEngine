@@ -195,7 +195,7 @@ extern "C" {
 
 - (void)searchValueWithSentence:(NSString *)sentence until:(NSTimeInterval)time resultHandler:(LEFTResultHandler)handler
 {
-    NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
+    NSArray *keywords = [[self partcipleWrapper] minimumParticipleContent:sentence];
     if ([keywords count] > 0) {
         [self searchValueWithKeywords:keywords until:time customType:NSUIntegerMax tag:nil orderBy:LEFTSearchOrderTypeNone resultHandler:handler];
     } else {
@@ -205,7 +205,7 @@ extern "C" {
 
 - (void)searchValueWithSentence:(NSString *)sentence customType:(NSUInteger)customType until:(NSTimeInterval)time tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType resultHandler:(LEFTResultHandler)handler
 {
-    NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
+    NSArray *keywords = [[self partcipleWrapper] minimumParticipleContent:sentence];
     if ([keywords count] > 0) {
         [self searchValueWithKeywords:keywords until:time customType:customType tag:tag orderBy:orderType resultHandler:handler];
     } else {
@@ -243,7 +243,7 @@ extern "C" {
 
 - (LEFTSearchResult *)searchValueSyncWithSentence:(NSString *)sentence until:(NSTimeInterval)time customType:(NSUInteger)customType tag:(NSString *)tag orderBy:(LEFTSearchOrderType)orderType;
 {
-    NSArray *keywords = [[self partcipleWrapper] minimumParticpleContent:sentence];
+    NSArray *keywords = [[self partcipleWrapper] minimumParticipleContent:sentence];
     return [self searchValueSyncWithKeywords:keywords until:time customType:customType tag:tag orderBy:orderType];
 }
 
@@ -349,7 +349,7 @@ extern "C" {
         if (res == SQLITE_OK) {
             for (LEFTValue *value in values) {
                 if ([value.keywords count] == 0) {
-                    value.keywords = [[self partcipleWrapper] minimumParticpleContent:value.content];
+                    value.keywords = [[self partcipleWrapper] minimumParticipleContent:value.content];
                 }
                 for (NSString *keyword in [value keywords]) {
                     [self _insertOrReplaceValue:value keyword:keyword];
