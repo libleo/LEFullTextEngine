@@ -146,6 +146,41 @@ using namespace std;
     return wordsArray;
 }
 
+- (NSArray *)minimumSimpleOtherParticipleContent:(NSString *)content;
+{
+    if (content == nil || [content length] == 0) {
+        return @[];
+    }
+    string cStr = [content cStringUsingEncoding:NSUTF8StringEncoding];
+    vector<string> words;
+    m_spJiebaParticple->CutSmall(cStr, words, 2);
+    
+    NSString *tmpStr = nil;
+    NSMutableString *otherCache = [NSMutableString string];
+    NSMutableArray *wordsArray = [NSMutableArray arrayWithCapacity:words.size()];
+    for (auto word = words.cbegin(); word != words.cend(); word++) {
+        tmpStr = [NSString stringWithUTF8String:word->c_str()];
+        if ([tmpStr length] > 0) {
+            unichar ch = [tmpStr characterAtIndex:0];
+            if ((ch >= 0x4E00 && ch <= 0x9FD5) || // unicode 汉字范围
+                (ch >= 0x3041 && ch <= 0x30FF) //　unicode 日语假名
+                ) {
+                [wordsArray addObject:tmpStr];
+                if ([otherCache length] > 0) {
+                    [wordsArray addObject:[NSString stringWithString:otherCache]];
+                    [otherCache deleteCharactersInRange:NSMakeRange(0, otherCache.length)];
+                }
+            } else {
+                [otherCache appendString:[NSString stringWithUTF8String:word->c_str()]];
+            }
+        }
+    }
+    if ([otherCache length] > 0) {
+        [wordsArray addObject:[NSString stringWithString:otherCache]];
+    }
+    return wordsArray;
+}
+
 - (NSArray *)minimumTestParticipleContent:(NSString *)content
 {
     if (content == nil || [content length] == 0) {
