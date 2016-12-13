@@ -163,26 +163,27 @@ using namespace std;
         if ([tmpStr length] > 0) {
             unichar ch = [tmpStr characterAtIndex:0];
             if ((ch >= 0x4E00 && ch <= 0x9FD5) || // unicode 汉字范围
-                (ch >= 0x3041 && ch <= 0x30FF) //　unicode 日语假名
+                (ch >= 0x3041 && ch <= 0x30FF) || //　unicode 日语假名
+                (ch >= 0x0030 && ch <= 0x0039)
                 ) {
                 [wordsArray addObject:tmpStr];
                 if ([otherCache length] > 0) {
-                    [wordsArray addObject:[NSString stringWithString:otherCache]];
+                    [wordsArray addObject:[[NSString stringWithString:otherCache] lowercaseString]];
                     [otherCache deleteCharactersInRange:NSMakeRange(0, otherCache.length)];
                 }
-            } else if ((ch >= 0x0030 && ch <= 0x0039) ||
-                       (ch >= 0x0041 && ch <= 0x007A)) {
+            } else if ((ch >= 0x0041 && ch <= 0x005A) ||
+                       (ch >= 0x0061 && ch <= 0x007A)) {
                 [otherCache appendString:[NSString stringWithUTF8String:word->c_str()]];
             } else {
                 if ([otherCache length] > 0) {
-                    [wordsArray addObject:[NSString stringWithString:otherCache]];
+                    [wordsArray addObject:[[NSString stringWithString:otherCache] lowercaseString]];
                     [otherCache deleteCharactersInRange:NSMakeRange(0, otherCache.length)];
                 }
             }
         }
     }
     if ([otherCache length] > 0) {
-        [wordsArray addObject:[NSString stringWithString:otherCache]];
+        [wordsArray addObject:[[NSString stringWithString:otherCache] lowercaseString]];
     }
     return wordsArray;
 }
