@@ -195,7 +195,7 @@
     words = [[self.fulltextEngine partcipleWrapper] minimumSimpleOtherParticipleContent:content];
     NSLog(@"content is %@, full words is %@", content, words);
     
-    content = @"lllb太难cnntm你什么dongxi网易中国研究院在杭州";
+    content = @"lllb太难cnntm你什么dong><xi网易中国研究院在杭州   XX<ch xi>";
     
     words = [[self.fulltextEngine partcipleWrapper] minimumTestParticipleContent:content];
     NSLog(@"content is %@, words is %@", content, words);

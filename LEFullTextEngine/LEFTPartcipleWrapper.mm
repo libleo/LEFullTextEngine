@@ -170,8 +170,14 @@ using namespace std;
                     [wordsArray addObject:[NSString stringWithString:otherCache]];
                     [otherCache deleteCharactersInRange:NSMakeRange(0, otherCache.length)];
                 }
-            } else {
+            } else if ((ch >= 0x0030 && ch <= 0x0039) ||
+                       (ch >= 0x0041 && ch <= 0x007A)) {
                 [otherCache appendString:[NSString stringWithUTF8String:word->c_str()]];
+            } else {
+                if ([otherCache length] > 0) {
+                    [wordsArray addObject:[NSString stringWithString:otherCache]];
+                    [otherCache deleteCharactersInRange:NSMakeRange(0, otherCache.length)];
+                }
             }
         }
     }
