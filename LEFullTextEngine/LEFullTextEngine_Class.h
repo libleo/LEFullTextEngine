@@ -29,6 +29,9 @@ typedef NS_ENUM(NSUInteger, LEFTIndexMode) {
 @interface LEFTSearchResult : NSObject
 
 @property (nonatomic, assign) clock_t usedClock;
+@property (nonatomic, readonly) NSError *error;
+
+- (BOOL)succeed;
 
 - (LEFTValue *)next;
 

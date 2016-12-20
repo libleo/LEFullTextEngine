@@ -14,6 +14,8 @@
 #include "json.h"
 #include <sqlite3.h>
 
+static NSString *sErrorDomain = @"LEFT SQLite Error";
+
 #define DB_SUFFIX @"idxdb"
 #define CURRENT_MAIN_DB_VER @"0.2"
 
@@ -32,11 +34,26 @@ extern "C" {
     {
         
     }
+    
+    static NSError *GenNSErrorWithDBHandler(sqlite3 *db)
+    {
+        const char *errormsg = sqlite3_errmsg(db);
+        int errorcode = sqlite3_errcode(db);
+        NSError *error;
+        NSString *errorString = [NSString stringWithUTF8String:errormsg];
+        if (errorString != nil) {
+            error = [NSError errorWithDomain:sErrorDomain code:errorcode userInfo:@{NSLocalizedDescriptionKey: errorString}];
+        } else {
+            NSLog(@"error string gen fail...%s", errormsg);
+        }
+        return error;
+    }
 }
 
 @interface LEFTSearchResult ()
 
 - (instancetype)initWithStmt:(sqlite3_stmt *)stmt;
+- (instancetype)initWithError:(NSError *)error;
 
 @end
 
@@ -290,8 +307,15 @@ extern "C" {
         char *sql;
         sql = (char *)[fetchSQL cStringUsingEncoding:NSUTF8StringEncoding];
         sqlite3_stmt *stmt;
-        sqlite3_prepare(_read_db, sql, (int)strlen(sql), &stmt, NULL);
-        LEFTSearchResult *result = [[LEFTSearchResult alloc] initWithStmt:stmt];
+        NSError *error;
+        LEFTSearchResult *result;
+        int res = sqlite3_prepare(_read_db, sql, (int)strlen(sql), &stmt, NULL);
+        if (res != SQLITE_OK) {
+            error = GenNSErrorWithDBHandler(_read_db);
+            result = [[LEFTSearchResult alloc] initWithError:error];
+        } else {
+            result = [[LEFTSearchResult alloc] initWithStmt:stmt];
+        }
         
         if (handler) {
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -684,6 +708,8 @@ extern "C" {
     std::map<std::string, int> _name_index;
 }
 
+@synthesize error = _error;
+
 - (void)dealloc
 {
     sqlite3_finalize(_stmt);
@@ -702,6 +728,22 @@ extern "C" {
         }
     }
     return self;
+}
+
+- (instancetype)initWithError:(NSError *)error
+{
+    if (self = [super init]) {
+        _error = error;
+    }
+    return self;
+}
+
+- (BOOL)succeed
+{
+    if (self.error == nil && _stmt != NULL) {
+        return YES;
+    }
+    return NO;
 }
 
 - (LEFTValue *)next
@@ -730,6 +772,10 @@ extern "C" {
         value.tag = [NSString stringWithUTF8String:tmp_str_value];
         
         return value;
+    } else if (res == SQLITE_DONE) {
+        return nil;
+    } else {
+        
     }
     return nil;
 }
