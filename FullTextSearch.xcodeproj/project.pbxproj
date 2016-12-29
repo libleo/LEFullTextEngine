@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B33EDA901E14B5EB003A628B /* LEFTCPUUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = B33EDA8E1E14B5EB003A628B /* LEFTCPUUsage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B33EDA911E14B5EB003A628B /* LEFTCPUUsage.m in Sources */ = {isa = PBXBuildFile; fileRef = B33EDA8F1E14B5EB003A628B /* LEFTCPUUsage.m */; };
 		B3779B321D4A2A3300C0F277 /* LEFullTextEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B311D4A2A3300C0F277 /* LEFullTextEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3779B391D4A2A3300C0F277 /* LEFullTextEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */; };
 		B3779B401D4A2A3300C0F277 /* LEFullTextEngineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B3779B3F1D4A2A3300C0F277 /* LEFullTextEngineTests.m */; };
@@ -79,10 +81,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B30736CC1CF478EC00D793C0 /* dict */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dict; path = ../cppjieba/dict; sourceTree = "<group>"; };
+		B30736CC1CF478EC00D793C0 /* dict */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dict; path = cppjieba/dict; sourceTree = "<group>"; };
 		B30736DB1CFFD3E100D793C0 /* json-forwards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "json-forwards.h"; sourceTree = "<group>"; };
 		B30736DC1CFFD3E100D793C0 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		B30736DD1CFFD3E100D793C0 /* jsoncpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsoncpp.cpp; sourceTree = "<group>"; };
+		B33EDA8E1E14B5EB003A628B /* LEFTCPUUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTCPUUsage.h; sourceTree = "<group>"; };
+		B33EDA8F1E14B5EB003A628B /* LEFTCPUUsage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTCPUUsage.m; sourceTree = "<group>"; };
 		B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LEFullTextEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3779B311D4A2A3300C0F277 /* LEFullTextEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEFullTextEngine.h; sourceTree = "<group>"; };
 		B3779B331D4A2A3300C0F277 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -97,8 +101,8 @@
 		B3779B701D4A31C300C0F277 /* LEFTValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTValue.m; sourceTree = "<group>"; };
 		B3779B711D4A31C300C0F277 /* LEFullTextEngine_Class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFullTextEngine_Class.h; sourceTree = "<group>"; };
 		B3779B721D4A31C300C0F277 /* LEFullTextEngine_Class.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LEFullTextEngine_Class.mm; sourceTree = "<group>"; };
-		B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTSQLDataImporter.h; sourceTree = "<group>"; };
-		B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTSQLDataImporter.m; sourceTree = "<group>"; };
+		B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LEFTSQLDataImporter.h; path = ../FullTextSearch/LEFullTextEngine/LEFTSQLDataImporter.h; sourceTree = "<group>"; };
+		B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LEFTSQLDataImporter.m; path = ../FullTextSearch/LEFullTextEngine/LEFTSQLDataImporter.m; sourceTree = "<group>"; };
 		B39590971D0D803100651C91 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
 		B39590981D0D803100651C91 /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
 		B39590991D0D803100651C91 /* FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseAdditions.h; sourceTree = "<group>"; };
@@ -175,16 +179,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B30736CE1CF5BD1E00D793C0 /* LEFullTextEngine */ = {
-			isa = PBXGroup;
-			children = (
-				B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */,
-				B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */,
-			);
-			name = LEFullTextEngine;
-			path = FullTextSearch/LEFullTextEngine;
-			sourceTree = "<group>";
-		};
 		B30736D91CFFD3E100D793C0 /* jsoncpp */ = {
 			isa = PBXGroup;
 			children = (
@@ -206,8 +200,6 @@
 		B3779B301D4A2A3300C0F277 /* LEFullTextEngine */ = {
 			isa = PBXGroup;
 			children = (
-				B30736CC1CF478EC00D793C0 /* dict */,
-				B3A516A11CEEF993003CFA3B /* cppjieba */,
 				B3779B311D4A2A3300C0F277 /* LEFullTextEngine.h */,
 				B3779B6C1D4A31C300C0F277 /* LEFTDataImporter.h */,
 				B3779B6D1D4A31C300C0F277 /* LEFTPartcipleWrapper.h */,
@@ -216,7 +208,11 @@
 				B3779B701D4A31C300C0F277 /* LEFTValue.m */,
 				B3779B711D4A31C300C0F277 /* LEFullTextEngine_Class.h */,
 				B3779B721D4A31C300C0F277 /* LEFullTextEngine_Class.mm */,
+				B39590931D0D66B200651C91 /* LEFTSQLDataImporter.h */,
+				B39590941D0D66B200651C91 /* LEFTSQLDataImporter.m */,
 				B3779B331D4A2A3300C0F277 /* Info.plist */,
+				B33EDA8E1E14B5EB003A628B /* LEFTCPUUsage.h */,
+				B33EDA8F1E14B5EB003A628B /* LEFTCPUUsage.m */,
 			);
 			path = LEFullTextEngine;
 			sourceTree = "<group>";
@@ -252,7 +248,6 @@
 		B3A5165C1CEEE6E6003CFA3B = {
 			isa = PBXGroup;
 			children = (
-				B30736CE1CF5BD1E00D793C0 /* LEFullTextEngine */,
 				B3A516A01CEEF97E003CFA3B /* Vendors */,
 				B3779B301D4A2A3300C0F277 /* LEFullTextEngine */,
 				B3779B3E1D4A2A3300C0F277 /* LEFullTextEngineTests */,
@@ -310,6 +305,8 @@
 		B3A516A01CEEF97E003CFA3B /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				B30736CC1CF478EC00D793C0 /* dict */,
+				B3A516A11CEEF993003CFA3B /* cppjieba */,
 				B39590961D0D803100651C91 /* fmdb */,
 				B30736D91CFFD3E100D793C0 /* jsoncpp */,
 			);
@@ -336,7 +333,7 @@
 				B3A516B01CEEF993003CFA3B /* Unicode.hpp */,
 			);
 			name = cppjieba;
-			path = ../cppjieba/include/cppjieba;
+			path = cppjieba/include/cppjieba;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -348,6 +345,7 @@
 			files = (
 				B3779B7A1D4A34D900C0F277 /* LEFullTextEngine_Class.h in Headers */,
 				B3779B321D4A2A3300C0F277 /* LEFullTextEngine.h in Headers */,
+				B33EDA901E14B5EB003A628B /* LEFTCPUUsage.h in Headers */,
 				B3779B761D4A31C300C0F277 /* LEFTValue.h in Headers */,
 				B3779B741D4A31C300C0F277 /* LEFTPartcipleWrapper.h in Headers */,
 				B3779B731D4A31C300C0F277 /* LEFTDataImporter.h in Headers */,
@@ -486,6 +484,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3779B771D4A31C300C0F277 /* LEFTValue.m in Sources */,
+				B33EDA911E14B5EB003A628B /* LEFTCPUUsage.m in Sources */,
 				B3779B791D4A31C300C0F277 /* LEFullTextEngine_Class.mm in Sources */,
 				B3779B751D4A31C300C0F277 /* LEFTPartcipleWrapper.mm in Sources */,
 			);

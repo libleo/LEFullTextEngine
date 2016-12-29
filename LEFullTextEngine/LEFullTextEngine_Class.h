@@ -64,8 +64,13 @@ typedef NS_ENUM(NSUInteger, LEFTIndexMode) {
 - (BOOL)importValues:(NSArray *)values;
 - (BOOL)importValuesSync:(NSArray *)values;
 // 清理数据库(delete)
+// 清理某日期之前的数据
+- (BOOL)deleteDataBeforeDate:(NSDate *)date;
+// 清理所有和keyword相关的数据
 - (BOOL)deleteValuesWithKeyword:(NSString *)keyword;
+// 清理和Value相关数据
 - (BOOL)deleteWithValue:(LEFTValue *)value;
+// 全部清理
 - (BOOL)truncate;
 
 // 同步测试接口

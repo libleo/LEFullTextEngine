@@ -19,7 +19,7 @@ static NSString *sErrorDomain = @"LEFT SQLite Error";
 #define DB_SUFFIX @"idxdb"
 #define CURRENT_MAIN_DB_VER @"0.2"
 
-#define CREATE_KEYWORD_TABLE_0_2 @"CREATE TABLE IF NOT EXISTS `%@` (idf VARCHAR(128) NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, tag VARCHAR, UNIQUE (idf, type));"
+#define CREATE_KEYWORD_TABLE_0_2 @"CREATE TABLE IF NOT EXISTS `%@` (idf VARCHAR(128) NOT NULL, type INTEGER NOT NULL, updatetime INTEGER NOT NULL, tag VARCHAR, PRIMARY KEY (idf, type));"
 #define CREATE_CONTENT_TABLE_0_2 @"CREATE TABLE IF NOT EXISTS `_content_cache` (idf VARCHAR(128) NOT NULL, type INTEGER NOT NULL, content TEXT, userinfo TEXT);"
 #define DELETE_TABLE @"DELETE FROM `%@`"
 
@@ -192,7 +192,7 @@ extern "C" {
     NSString *nsSql = [NSString stringWithFormat:@"SELECT `rowid` FROM `sqlite_master` WHERE name=\"%@\"", keyword];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_stmt *stmt;
-    sqlite3_prepare(_main_thread_db, sql, (int)strlen(sql), &stmt, NULL);
+    sqlite3_prepare_v2(_main_thread_db, sql, (int)strlen(sql), &stmt, NULL);
     
     unsigned long long row_id = 0;
     while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -292,7 +292,7 @@ extern "C" {
     clock_t start = clock();
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     sqlite3_stmt *stmt;
-    sqlite3_prepare(_main_thread_db, sql, (int)strlen(sql), &stmt, NULL);
+    sqlite3_prepare_v2(_main_thread_db, sql, (int)strlen(sql), &stmt, NULL);
     LEFTSearchResult *result = [[LEFTSearchResult alloc] initWithStmt:stmt];
     result.usedClock = clock() - start;
     
@@ -309,7 +309,7 @@ extern "C" {
         sqlite3_stmt *stmt;
         NSError *error;
         LEFTSearchResult *result;
-        int res = sqlite3_prepare(_read_db, sql, (int)strlen(sql), &stmt, NULL);
+        int res = sqlite3_prepare_v2(_read_db, sql, (int)strlen(sql), &stmt, NULL);
         if (res != SQLITE_OK) {
             error = GenNSErrorWithDBHandler(_read_db);
             result = [[LEFTSearchResult alloc] initWithError:error];
@@ -416,6 +416,21 @@ extern "C" {
     sqlite3_free(err_str);
     sqlite3_free(sql);
     return res == SQLITE_OK;
+}
+
+- (BOOL)deleteDataBeforeDate:(NSDate *)date
+{
+    @autoreleasepool {
+#ifdef RUNLOOP_M
+        [self performSelector:@selector(_deleteBeforeDate:) onThread:self.importThread withObject:date waitUntilDone:NO modes:@[NSRunLoopCommonModes]];
+#elif defined GCD_M
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(_import_queue, ^{
+            [weakSelf _deleteTable:keyword];
+        });
+#endif
+    }
+    return YES;
 }
 
 - (BOOL)deleteValuesWithKeyword:(NSString *)keyword
@@ -528,6 +543,32 @@ extern "C" {
 
 #pragma mark private method
 
+// 准备语句和数据库
+- (sqlite3_stmt *)_executeSQL:(NSString *)nsSql withHandler:(sqlite3 *)handler
+{
+    sqlite3_stmt *stmt;
+    char *sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_prepare_v2(handler, sql, (int)strlen(sql), &stmt, NULL);
+    
+    return stmt;
+}
+
+- (BOOL)_checkTableHasRow:(NSString *)tableName withHandler:(sqlite3 *)handler
+{
+    NSString *nsSql = [NSString stringWithFormat:@"SELECT COUNT(*) FROM `%@`", tableName];
+    sqlite3_stmt *stmt = [self _executeSQL:nsSql withHandler:handler];
+    
+    unsigned long long count = 0;
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        count = sqlite3_column_int64(stmt, 0);
+        if (count > 0) {
+            break;
+        }
+    }
+    sqlite3_finalize(stmt);
+    return count > 0;
+}
+
 - (NSArray *)_filterKeywords:(NSArray *)keywords
 {
     NSMutableArray *filterKeywords = [NSMutableArray arrayWithCapacity:[keywords count]];
@@ -544,8 +585,7 @@ extern "C" {
     char *sql;
     NSString *nsSql = [NSString stringWithFormat:@"SELECT `rowid`, `idf`, `type` FROM `%@` WHERE idf=\"%s\" AND type=%d LIMIT 1", keyword, [value.identifier cStringUsingEncoding:NSUTF8StringEncoding], value.type];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
-    sqlite3_stmt *stmt;
-    sqlite3_prepare(_write_db, sql, (int)strlen(sql), &stmt, NULL);
+    sqlite3_stmt *stmt = [self _executeSQL:nsSql withHandler:_write_db];
     
     unsigned long long row_id = 0;
     while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -626,14 +666,48 @@ extern "C" {
     sqlite3_free(sql);
 }
 
+- (void)_deleteBeforeDate:(NSDate *)date
+{
+    char *sql, *err_str;
+    NSString *nsSql = [NSString stringWithFormat:@"SELECT `tbl_name` FROM `sqlite_master` WHERE type=\"table\""];
+    sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(_write_db, sql, (int)strlen(sql), &stmt, NULL);
+    
+    unsigned char *table_name = 0;
+    NSMutableArray *tableNames = [NSMutableArray array];
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        table_name = (unsigned char *)sqlite3_column_text(stmt, 0);
+        if (table_name != NULL) {
+            NSString *tableName = [NSString stringWithCString:(const char *)table_name encoding:NSUTF8StringEncoding];
+            [tableNames addObject:tableName];
+        }
+    }
+    sqlite3_finalize(stmt);
+
+    NSTimeInterval timeInterval = [date timeIntervalSince1970];
+    for (NSString *tableName in tableNames) {
+        NSString *nsSql = [NSString stringWithFormat:@"DELETE FROM `%@` WHERE updatetime <= %.0lf", tableName, timeInterval];
+        sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
+        int res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
+        if (res != SQLITE_OK) {
+            printf("delete table %s error <%s>", [tableName cStringUsingEncoding:NSUTF8StringEncoding], err_str);
+        }
+        sqlite3_free(err_str);
+        if (![self _checkTableHasRow:tableName withHandler:_write_db]) {
+            [self _deleteTable:tableName];
+        }
+    }
+}
+
 - (void)_deleteTable:(NSString *)tableName
 {
     char *sql, *err_str;
-    NSString *nsSql = [NSString stringWithFormat:DELETE_TABLE, tableName];
+    NSString *nsSql = [NSString stringWithFormat:@"DROP TABLE `%@`", tableName];
     sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
     int res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
     if (res != SQLITE_OK) {
-        printf("delete table %s error <%s>", [tableName cStringUsingEncoding:NSUTF8StringEncoding], err_str);
+        printf("drop table %s error <%s>", [tableName cStringUsingEncoding:NSUTF8StringEncoding], err_str);
     }
     sqlite3_free(err_str);
 }

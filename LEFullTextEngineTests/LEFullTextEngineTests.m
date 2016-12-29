@@ -80,80 +80,80 @@
 - (void)setUp {
     [super setUp];
     clock_t begin = clock();
-    self.fulltextEngine = [[LEFullTextEngine alloc] init];
+    self.fulltextEngine = [[LEFullTextEngine alloc] initWithRootDirectory:@"/Users/leo"];
     NSLog(@"init time use %lf", (double)(clock() - begin)/CLOCKS_PER_SEC);
     
-    self.imImporter = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
-    __weak typeof(self.imImporter) weakImport = self.imImporter;
-    self.imImporter.dbPath = @"/Users/Leo/Documents/imchatdb/immsghis.db";
-    self.imImporter.importProcess = ^(FMDatabase *db) {
-        FMResultSet *set = [db executeQuery:@"SELECT * FROM instantmsg"];
-        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
-        NSUInteger i = 0;
-        while ([set next]) {
-            LEFTValue *value = [[LEFTValue alloc] init];
-            value.identifier = [NSString stringWithFormat:@"msg_%ld", [set longForColumn:@"guuid"]];
-            value.type = 1;
-            value.updateTime = [set longForColumn:@"dtime"];
-            NSString *content = [set stringForColumn:@"content"];
-            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
-            value.tag = [set stringForColumn:@"uid"];
-            value.userInfo = @{@"remoteUser": value.tag};
-            
-            [weakImport.engine importValuesSync:@[value]];
-            i++;
-            //            NSLog(@"msg import value <%@>", value);
-        }
-        NSLog(@"finish im block <><%zd><>", i);
-    };
-    
-    self.sysImporter = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
-    weakImport = self.sysImporter;
-    self.sysImporter.dbPath = @"/Users/Leo/Documents/imchatdb/sysmsghis.db";
-    self.sysImporter.importProcess = ^(FMDatabase *db) {
-        FMResultSet *set = [db executeQuery:@"SELECT * FROM systemmsg"];
-        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
-        NSUInteger i = 0;
-        while ([set next]) {
-            LEFTValue *value = [[LEFTValue alloc] init];
-            value.identifier = [NSString stringWithFormat:@"sys_%ld", [set longForColumn:@"guuid"]];
-            value.type = 2;
-            value.updateTime = [set longForColumn:@"dtime"];
-            NSString *content = [set stringForColumn:@"contentex"];
-            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
-            value.tag = [set stringForColumn:@"uid"];
-            value.userInfo = @{@"remoteUser": value.tag};
-            
-            [weakImport.engine importValuesSync:@[value]];
-            i++;
-            //            NSLog(@"sys import value <%@>", value);
-        }
-        NSLog(@"finish sys block <><%zd><>", i);
-    };
-    
-    self.tmImporter = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
-    weakImport = self.tmImporter;
-    self.tmImporter.dbPath = @"/Users/Leo/Documents/imchatdb/tmmsghis.db";
-    self.tmImporter.importProcess = ^(FMDatabase *db) {
-        FMResultSet *set = [db executeQuery:@"SELECT * FROM tribemsg"];
-        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
-        NSUInteger i = 0;
-        while ([set next]) {
-            LEFTValue *value = [[LEFTValue alloc] init];
-            value.identifier = [NSString stringWithFormat:@"tm_%ld", [set longForColumn:@"guuid"]];
-            value.type = 3;
-            value.updateTime = [set longForColumn:@"dtime"];
-            NSString *content = [set stringForColumn:@"content"];
-            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
-            value.tag = [set stringForColumn:@"roomid"];
-            value.userInfo = @{@"roomId": value.tag};
-            
-            [weakImport.engine importValuesSync:@[value]];
-            i++;
-            //            NSLog(@"tribe import value <%@>", value);
-        }
-        NSLog(@"finish tm block <><%zd><>", i);
-    };
+//    self.imImporter = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
+//    __weak typeof(self.imImporter) weakImport = self.imImporter;
+//    self.imImporter.dbPath = @"/Users/Leo/Documents/imchatdb/immsghis.db";
+//    self.imImporter.importProcess = ^(FMDatabase *db) {
+//        FMResultSet *set = [db executeQuery:@"SELECT * FROM instantmsg"];
+//        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
+//        NSUInteger i = 0;
+//        while ([set next]) {
+//            LEFTValue *value = [[LEFTValue alloc] init];
+//            value.identifier = [NSString stringWithFormat:@"msg_%ld", [set longForColumn:@"guuid"]];
+//            value.type = 1;
+//            value.updateTime = [set longForColumn:@"dtime"];
+//            NSString *content = [set stringForColumn:@"content"];
+//            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
+//            value.tag = [set stringForColumn:@"uid"];
+//            value.userInfo = @{@"remoteUser": value.tag};
+//            
+//            [weakImport.engine importValuesSync:@[value]];
+//            i++;
+//            //            NSLog(@"msg import value <%@>", value);
+//        }
+//        NSLog(@"finish im block <><%zd><>", i);
+//    };
+//    
+//    self.sysImporter = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
+//    weakImport = self.sysImporter;
+//    self.sysImporter.dbPath = @"/Users/Leo/Documents/imchatdb/sysmsghis.db";
+//    self.sysImporter.importProcess = ^(FMDatabase *db) {
+//        FMResultSet *set = [db executeQuery:@"SELECT * FROM systemmsg"];
+//        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
+//        NSUInteger i = 0;
+//        while ([set next]) {
+//            LEFTValue *value = [[LEFTValue alloc] init];
+//            value.identifier = [NSString stringWithFormat:@"sys_%ld", [set longForColumn:@"guuid"]];
+//            value.type = 2;
+//            value.updateTime = [set longForColumn:@"dtime"];
+//            NSString *content = [set stringForColumn:@"contentex"];
+//            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
+//            value.tag = [set stringForColumn:@"uid"];
+//            value.userInfo = @{@"remoteUser": value.tag};
+//            
+//            [weakImport.engine importValuesSync:@[value]];
+//            i++;
+//            //            NSLog(@"sys import value <%@>", value);
+//        }
+//        NSLog(@"finish sys block <><%zd><>", i);
+//    };
+//    
+//    self.tmImporter = [[LEFTSQLDataImporter alloc] initWithEngine:self.fulltextEngine];
+//    weakImport = self.tmImporter;
+//    self.tmImporter.dbPath = @"/Users/Leo/Documents/imchatdb/tmmsghis.db";
+//    self.tmImporter.importProcess = ^(FMDatabase *db) {
+//        FMResultSet *set = [db executeQuery:@"SELECT * FROM tribemsg"];
+//        //            NSUInteger count = [database intForQuery:@"SELECT COUNT(*) FROM instantmsg"];
+//        NSUInteger i = 0;
+//        while ([set next]) {
+//            LEFTValue *value = [[LEFTValue alloc] init];
+//            value.identifier = [NSString stringWithFormat:@"tm_%ld", [set longForColumn:@"guuid"]];
+//            value.type = 3;
+//            value.updateTime = [set longForColumn:@"dtime"];
+//            NSString *content = [set stringForColumn:@"content"];
+//            value.content = [content length] > 128 ? @"" : [content xmlSimpleEscapeString];
+//            value.tag = [set stringForColumn:@"roomid"];
+//            value.userInfo = @{@"roomId": value.tag};
+//            
+//            [weakImport.engine importValuesSync:@[value]];
+//            i++;
+//            //            NSLog(@"tribe import value <%@>", value);
+//        }
+//        NSLog(@"finish tm block <><%zd><>", i);
+//    };
 
 }
 
@@ -189,46 +189,55 @@
 
 - (void)testParticiple
 {
-    NSString *content = @"hello你好呀world";
-    NSArray *words = [[self.fulltextEngine partcipleWrapper] minimumTestParticipleContent:content];
-    NSLog(@"content is %@, words is %@", content, words);
-    words = [[self.fulltextEngine partcipleWrapper] minimumSimpleOtherParticipleContent:content];
-    NSLog(@"content is %@, full words is %@", content, words);
-    
-    content = @"lllb太难cnntm你什么dong><xi网易中国研究院在杭州   XX<ch xi>";
-    
-    words = [[self.fulltextEngine partcipleWrapper] minimumTestParticipleContent:content];
-    NSLog(@"content is %@, words is %@", content, words);
-    words = [[self.fulltextEngine partcipleWrapper] minimumSimpleOtherParticipleContent:content];
-    NSLog(@"content is %@, full words is %@", content, words);
+//    NSString *content = @"hello你好呀world";
+//    NSArray *words = [[self.fulltextEngine partcipleWrapper] minimumTestParticipleContent:content];
+//    NSLog(@"content is %@, words is %@", content, words);
+//    words = [[self.fulltextEngine partcipleWrapper] minimumSimpleOtherParticipleContent:content];
+//    NSLog(@"content is %@, full words is %@", content, words);
+//    
+//    content = @"lllb太难cnntm你什么dong><xi网易中国研究院在杭州   XX<ch xi>";
+//    
+//    words = [[self.fulltextEngine partcipleWrapper] minimumTestParticipleContent:content];
+//    NSLog(@"content is %@, words is %@", content, words);
+//    words = [[self.fulltextEngine partcipleWrapper] minimumSimpleOtherParticipleContent:content];
+//    NSLog(@"content is %@, full words is %@", content, words);
 }
 
 - (void)testSearch
 {
-    __block BOOL finish = NO;
-    [self.fulltextEngine searchValueWithKeywords:@[@"一个"] until:1000000 resultHandler:^(LEFTSearchResult *result) {
-        LEFTValue *value = [result next];
-        NSUInteger i = 0;
-        while (value) {
-            NSLog(@"..... %@", value);
-            i++;
-            value = [result next];
-        }
-        finish = YES;
-    }];
-    while (!finish) {
-        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-        [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
-    }
+//    __block BOOL finish = NO;
+//    [self.fulltextEngine searchValueWithKeywords:@[@"一个"] until:1000000 resultHandler:^(LEFTSearchResult *result) {
+//        LEFTValue *value = [result next];
+//        NSUInteger i = 0;
+//        while (value) {
+//            NSLog(@"..... %@", value);
+//            i++;
+//            value = [result next];
+//        }
+//        finish = YES;
+//    }];
+//    while (!finish) {
+//        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+//        [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
+//    }
 }
 
 - (void)testDelete
 {
-    LEFTValue *value = [[LEFTValue alloc] init];
-    value.keywords = @[@"一个"];
-    value.identifier = @"tm_6052932614138918611";
-    value.type = 3;
-    [self.fulltextEngine deleteWithValue:value];
+//    LEFTValue *value = [[LEFTValue alloc] init];
+//    value.keywords = @[@"一个"];
+//    value.identifier = @"tm_6052932614138918611";
+//    value.type = 3;
+//    [self.fulltextEngine deleteWithValue:value];
+}
+
+- (void)testDeleteBefore
+{
+    [self.fulltextEngine deleteDataBeforeDate:[NSDate date]];
+    while (YES) {
+        NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+        [runloop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+    }
 }
 
 @end

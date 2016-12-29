@@ -9,10 +9,11 @@
 #import "ViewController.h"
 #import "LEFTSQLDataImporter.h"
 
-
 @interface ViewController ()
 
 @property (nonatomic, strong) LEFullTextEngine *fulltextEngine;
+
+@property (nonatomic, strong) NSTimer *timer;
 
 @end
 
@@ -86,6 +87,8 @@
     [self.fulltextEngine startImporter:importor];
     [self.fulltextEngine startImporter:sysImportor];
 //    [self.fulltextEngine startImporter:tribeImportor];
+    
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(printUsage:) userInfo:nil repeats:YES];
 
 }
 
@@ -93,6 +96,11 @@
     [super setRepresentedObject:representedObject];
 
     // Update the view, if already loaded.
+}
+
+- (void)printUsage:(id)timer
+{
+
 }
 
 @end
