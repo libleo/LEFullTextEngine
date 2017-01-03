@@ -691,7 +691,10 @@ extern "C" {
         sql = (char *)[nsSql cStringUsingEncoding:NSUTF8StringEncoding];
         int res = sqlite3_exec(_write_db, sql, NULL, NULL, &err_str);
         if (res != SQLITE_OK) {
-            printf("delete table %s error <%s>", [tableName cStringUsingEncoding:NSUTF8StringEncoding], err_str);
+            printf("delete table %s error <%s>\n", [tableName cStringUsingEncoding:NSUTF8StringEncoding], err_str);
+        } else {
+            int changed = sqlite3_changes(_write_db);
+            printf("delete from %s <%d>\n", [tableName cStringUsingEncoding:NSUTF8StringEncoding], changed);
         }
         sqlite3_free(err_str);
         if (![self _checkTableHasRow:tableName withHandler:_write_db]) {
