@@ -10,6 +10,7 @@
 #import "LEFTPartcipleWrapper.h"
 #import "LEFTDataImporter.h"
 #import "LEFTValue.h"
+#import "LEFTImportOperation.h"
 
 #include "json.h"
 #include <sqlite3.h>
@@ -504,12 +505,19 @@ extern "C" {
 
 - (void)startImporter:(id<LEFTDataImporter>)importer
 {
+    if ([self.dataImporters containsObject:importer]) {
+        return;
+    }
     [self.dataImporters addObject:importer];
     importer.status = LEFTDataImporterStatusPending;
     
-    NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-        [importer start];
-    }];
+    LEFTImportOperation *operation = [[LEFTImportOperation alloc] initWithImporter:importer];
+    __weak typeof(self) weakSelf = self;
+    operation.completionBlock = ^ {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [weakSelf.dataImporters removeObject:importer];
+        });
+    };
     operation.queuePriority = self.importerPriority;
     [self.importQueue addOperation:operation];
 }
@@ -531,6 +539,14 @@ extern "C" {
 - (BOOL)cancelImporter:(id<LEFTDataImporter>)importer
 {
     if ([self.dataImporters containsObject:importer]) {
+        for (LEFTImportOperation *operation in self.importQueue.operations) {
+            if ([operation.importer isEqual:importer]) {
+                [operation cancel];
+                [self.dataImporters removeObject:importer];
+                break;
+            }
+        }
+        [importer cancel];
         return YES;
     }
     return NO;

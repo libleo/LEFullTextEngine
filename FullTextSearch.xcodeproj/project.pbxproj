@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		B33EDA901E14B5EB003A628B /* LEFTCPUUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = B33EDA8E1E14B5EB003A628B /* LEFTCPUUsage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B33EDA911E14B5EB003A628B /* LEFTCPUUsage.m in Sources */ = {isa = PBXBuildFile; fileRef = B33EDA8F1E14B5EB003A628B /* LEFTCPUUsage.m */; };
+		B34D98FB1E4C494C00E304FA /* LEFTImportOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = B34D98F91E4C494C00E304FA /* LEFTImportOperation.h */; };
+		B34D98FC1E4C494C00E304FA /* LEFTImportOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = B34D98FA1E4C494C00E304FA /* LEFTImportOperation.m */; };
 		B3779B321D4A2A3300C0F277 /* LEFullTextEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = B3779B311D4A2A3300C0F277 /* LEFullTextEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3779B391D4A2A3300C0F277 /* LEFullTextEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */; };
 		B3779B401D4A2A3300C0F277 /* LEFullTextEngineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B3779B3F1D4A2A3300C0F277 /* LEFullTextEngineTests.m */; };
@@ -87,6 +89,8 @@
 		B30736DD1CFFD3E100D793C0 /* jsoncpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsoncpp.cpp; sourceTree = "<group>"; };
 		B33EDA8E1E14B5EB003A628B /* LEFTCPUUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTCPUUsage.h; sourceTree = "<group>"; };
 		B33EDA8F1E14B5EB003A628B /* LEFTCPUUsage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTCPUUsage.m; sourceTree = "<group>"; };
+		B34D98F91E4C494C00E304FA /* LEFTImportOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEFTImportOperation.h; sourceTree = "<group>"; };
+		B34D98FA1E4C494C00E304FA /* LEFTImportOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEFTImportOperation.m; sourceTree = "<group>"; };
 		B3779B2F1D4A2A3300C0F277 /* LEFullTextEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LEFullTextEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3779B311D4A2A3300C0F277 /* LEFullTextEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEFullTextEngine.h; sourceTree = "<group>"; };
 		B3779B331D4A2A3300C0F277 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -213,6 +217,8 @@
 				B3779B331D4A2A3300C0F277 /* Info.plist */,
 				B33EDA8E1E14B5EB003A628B /* LEFTCPUUsage.h */,
 				B33EDA8F1E14B5EB003A628B /* LEFTCPUUsage.m */,
+				B34D98F91E4C494C00E304FA /* LEFTImportOperation.h */,
+				B34D98FA1E4C494C00E304FA /* LEFTImportOperation.m */,
 			);
 			path = LEFullTextEngine;
 			sourceTree = "<group>";
@@ -344,6 +350,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3779B7A1D4A34D900C0F277 /* LEFullTextEngine_Class.h in Headers */,
+				B34D98FB1E4C494C00E304FA /* LEFTImportOperation.h in Headers */,
 				B3779B321D4A2A3300C0F277 /* LEFullTextEngine.h in Headers */,
 				B33EDA901E14B5EB003A628B /* LEFTCPUUsage.h in Headers */,
 				B3779B761D4A31C300C0F277 /* LEFTValue.h in Headers */,
@@ -486,6 +493,7 @@
 				B3779B771D4A31C300C0F277 /* LEFTValue.m in Sources */,
 				B33EDA911E14B5EB003A628B /* LEFTCPUUsage.m in Sources */,
 				B3779B791D4A31C300C0F277 /* LEFullTextEngine_Class.mm in Sources */,
+				B34D98FC1E4C494C00E304FA /* LEFTImportOperation.m in Sources */,
 				B3779B751D4A31C300C0F277 /* LEFTPartcipleWrapper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
