@@ -148,20 +148,30 @@ extern "C" {
     self.indexMode = LEFTIndexModePure;
     
     int safe = sqlite3_threadsafe();
+    int c_res = 0;
     NSLog(@"thread safe %d", safe);
     self.dbPath = [self _dbNameWithName:@"main"];
     const char *db_path = [self.dbPath cStringUsingEncoding:NSUTF8StringEncoding];
-    res = sqlite3_open(db_path, &_write_db);
-    if (res != 0) {
-        NSLog(@"open write db failed <%s>", strerror(errno));
+    c_res = sqlite3_open_v2(db_path,
+                          &_write_db,
+                          SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX,
+                          NULL);
+    if (c_res != 0) {
+        NSLog(@"open write db failed <%s> <%s>", sqlite3_errstr(c_res), strerror(errno));
     }
-    res = sqlite3_open(db_path, &_read_db);
-    if (res != 0) {
-        NSLog(@"open read db failed <%s>", strerror(errno));
+    c_res = sqlite3_open_v2(db_path,
+                          &_read_db,
+                          SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX,
+                          NULL);
+    if (c_res != 0) {
+        NSLog(@"open read db failed <%s> <%s>", sqlite3_errstr(c_res), strerror(errno));
     }
-    res = sqlite3_open(db_path, &_main_thread_db);
-    if (res != 0) {
-        NSLog(@"open main_thread db failed <%s>", strerror(errno));
+    c_res = sqlite3_open_v2(db_path,
+                          &_main_thread_db,
+                          SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX,
+                          NULL);
+    if (c_res != 0) {
+        NSLog(@"open main_thread db failed <%s> <%s>", sqlite3_errstr(c_res), strerror(errno));
     }
     
     // 初始化fetch线程
